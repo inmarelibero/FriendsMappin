@@ -5,5 +5,5 @@
 /bin/
 /composer.phar
 
-# ignore latest database dump
-app/Resources/sql/backups/*.latest.sql.gz
+# ignore Twitter oauth datas parameters
+app/config/parameters_twitter_oauth_datas.yml

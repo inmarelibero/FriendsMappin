@@ -23,7 +23,8 @@
         "willdurand/geocoder": "~2.8",
         "friendsofsymfony/jsrouting-bundle": "1.*@dev",
         "stof/doctrine-extensions-bundle": "~1.1@dev",
-        "leafo/lessphp": "0.4.*@dev"
+        "leafo/lessphp": "0.4.*@dev",
+        "jms/serializer-bundle": "~0.13"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

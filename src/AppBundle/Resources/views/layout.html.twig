@@ -1,16 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
+        <title>{% block title %}FriendsMappin - Find where your followers are{% endblock %}</title>
+        <meta name="author" content="Emanuele Gaspari - @inmarelibero" />
+        <meta name="description" content="Show on a map where your Twitter followers are" />
+        <meta name="keywords" content="twitter friends mapping friend map geo geolocalize follower followers api">
 
-        <title>{% block title %}Friendsmappin.com{% endblock %}</title>
+        <meta property="og:title" content="FriendsMappin - Show on a map where your Twitter followers are" />
+        <meta property="og:image" content="{{ asset('images/social-share.png', null, true) }}" />
+        <meta property="og:url" content="{{ app.request.uri }}" />
+        <meta property="og:description" content="Quite buggy, not completely working, but cool proof of concept. By inmarelibero." />
+
+
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.1/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.1/angular-sanitize.js"></script>
+
+
+        {# https://github.com/anomal/RainbowVis-JS #}
+        <script src="{{ asset('assets/RainbowVis-JS/rainbowvis.js') }}"></script>
 
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
@@ -38,11 +52,69 @@
         {% endif %}
 
     </head>
-    <body ng-app="myApp">
+    <body ng-app="myApp" ng-controller="GreetingController">
 
         <div growl></div>
 
+        {% block header %}
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        {#
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        #}
+                        <a class="navbar-brand" href="{{ path('homepage') }}">FriendsMappin</a>
+                    </div>
+                    <div class="">
+
+                        <form class="navbar-form navbar-left" role="search" action="{{ path('user_form_submit') }}" method="POST">
+                            <div class="input-group" style="width: 160px;">
+                                <input id="username" type="text" class="form-control" name="username" ng-model="username" ng-init="username='{{ app.request.get('username', '') }}'" placeholder="Twitter user" />
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-search"
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+
+                        <p class="navbar-text">
+                            {% if (app.request.get('username')) %}
+                                <span>{[{ user.friends_count }]} Friends</span> ({[{ users_fetched.friends.length }]} fetched, {[{ getUserFetchedWithLocation().friends.length }]} localized)
+                                &nbsp;&nbsp;&nbsp;
+                                <br class="visible-xs">
+                                <span>{[{ user.followers_count }]} Followers</span> ({[{ users_fetched.followers.length }]} fetched, {[{ getUserFetchedWithLocation().followers.length }]} localized)
+                            {% else %}
+                                <= enter a Twitter username to find where his followers and followings are
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </nav>
+        {% endblock %}
+
         {% block body '' %}
+
+        <nav class="navbar navbar-default navbar-fixed-bottom" id="footer">
+            <div class="container-fluid">
+                <p class="navbar-text">
+
+                        {% if (app.request.get('username')) %}
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                        {% else %}
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Show on a map where your Twitter followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                        {% endif %}
+
+                    Quite buggy, not completely working, but cool proof of concept by <a href="https://twitter.com/inmarelibero" target="_blank">inmarelibero</a>.
+
+                </p>
+            </div>
+        </nav>
 
         {# FOOTER DA ASSETIC #}
         {% javascripts '@frontend_footer_javascripts' %}
@@ -53,7 +125,7 @@
         <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
         <script>
-            var app = angular.module('myApp', ['ui.bootstrap', 'angular-growl', 'ngProgress'])
+            var app = angular.module('myApp', ['ui.bootstrap', 'angular-growl', 'ngProgress', 'angularSpinner'])
                 .config(function($interpolateProvider){
                     $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
                 })
@@ -64,8 +136,10 @@
                 growlProvider.globalDisableCountDown(false);
             }]);
         </script>
-        {% block javascripts '' %}
 
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+        {% block javascripts '' %}
 
     </body>
 </html>

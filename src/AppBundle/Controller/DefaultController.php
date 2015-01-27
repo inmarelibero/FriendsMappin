@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -13,10 +14,47 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage", options={"expose" = true})
+     * @Route("/", name="homepage")
      * @Template()
      */
     public function indexAction(Request $request)
+    {
+        // old redirect
+        if ($request->get('username')) {
+            return $this->redirectToRoute('show_user_map', array('username' => $request->get('username')));
+        }
+
+        // background map
+        $map = $this->get('ivory_google_map.map');
+
+        return array(
+            'map' => $map,
+        );
+    }
+
+    /**
+     * @Route("/user", name="user_form_submit")
+     * @Method("POST")
+     * @Template()
+     */
+    public function submitUserFormAction(Request $request)
+    {
+        // old redirect
+        if ($request->get('username')) {
+            return $this->redirectToRoute('show_user_map', array('username' => $request->get('username')));
+        }
+
+        // should throw exception
+        return $this->redirectToRoute('homepage');
+
+        throw new HttpException(500, "You must specify a username.");
+    }
+
+    /**
+     * @Route("/user/{username}", name="show_user_map")
+     * @Template("AppBundle:Default:show_user_map.html.twig")
+     */
+    public function showUserMapAction(Request $request)
     {
         // map
         $map = $this->get('ivory_google_map.map');
@@ -67,45 +105,23 @@ class DefaultController extends Controller
 
         $urlAction = "/1.1/{$typeOfUsers}/list.json?cursor={$cursor}&screen_name={$username}&skip_status=true&include_user_entities=false&count=200";
 
+        // fetch response from database or from Twitter
         $response = $this->get('apirequestcache.service')->getAPICallResult($urlAction);
-
         $response = json_decode($response, true);
+
+        /**
+         * populate every user with "latitude" and "longitude" fields
+         */
+        foreach ($response['users'] as $k => $user) {
+            list($latitude, $longitude) = $this->get('geocoder_result.service')->getLatLongForLocation($user['location']);
+
+            $response['users'][$k]['latitude'] = $latitude;
+            $response['users'][$k]['longitude'] = $longitude;
+        }
+
+        // set type of users
         $response['type_of_users'] = $typeOfUsers;
 
         return new JsonResponse($response);
-    }
-
-    /**
-     * @Cache(smaxage="3600")
-     * @Route("/get_coordinates_from_location", name="get_coordinates_from_location", options={"expose" = true})
-     */
-    public function getCoordinatesFromLocationAction(Request $request)
-    {
-        $request_body = file_get_contents('php://input');
-        $data = json_decode($request_body);
-
-        $locations = $data->locations;
-
-        $jsonParameters = array();
-
-        foreach ($locations as $k => $location) {
-            try {
-                list($latitude, $longitude) = $this->get('geocoder_result.service')->getLatLongForLocation($location);
-            } catch (\Exception $e) {
-                $jsonParameters[$location] = array(
-                    'latitude' => null,
-                    'longitude' => null
-                );
-
-                continue;
-            }
-
-            $jsonParameters[$location] = array(
-                'latitude' => $latitude,
-                'longitude' => $longitude
-            );
-        }
-
-        return new JsonResponse($jsonParameters);
     }
 }

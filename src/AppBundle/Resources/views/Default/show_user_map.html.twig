@@ -1,0 +1,448 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+    <div>
+
+        <div id="wrapper-fullscreen">
+
+            <div id="map-wrapper">
+                {{ google_map(map) }}
+            </div>
+            <div id="map-modal" class="ng-hide" ng-show="operation_in_progress != ''">
+                <div class="message-body">
+                    <p>
+                        {[{ operation_in_progress }]}
+                    </p>
+
+                    <div style="position: relative; margin-top: 30px;">
+                        <span us-spinner="{radius:9, width:5, length: 7, color: '#FFF'}" spinner-key="spinner-operation" style="margin-top: 20px"></span>
+                    </div>
+
+                    <br><br><br><br>
+                    <p style="font-size: 12px;">
+                        While waiting, consider spreading the voice via
+                        {% if (app.request.get('username')) %}
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                        {% else %}
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Find where your followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div id="right-panel">
+                <ul class="users-loaded">
+                    <li class="title" ng-show="getUserFetchedWithLocation().friends.length > 0">Friends ({[{ getUserFetchedWithLocation().friends.length }]})</li>
+                    <li ng-repeat="user in getUserFetchedWithLocation().friends">
+                        <span tooltip="{[{ user.screen_name }]}">
+                            <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                        </span>
+                    </li>
+                </ul>
+                <br ng-show="friends_markers.length > 0 && followers_markers.length > 0">
+                <ul class="users-loaded">
+                    <li class="title" ng-show="getUserFetchedWithLocation().followers.length > 0">Followers ({[{ getUserFetchedWithLocation().followers.length }]})</li>
+                    <li ng-repeat="user in getUserFetchedWithLocation().followers">
+                        <span tooltip="{[{ user.screen_name }]}">
+                            <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+    <script>
+        app.controller('GreetingController', ['$scope', '$http', 'growl', '$document', 'ngProgress', 'usSpinnerService', function($scope, $http, growl, $document, ngProgress, usSpinnerService) {
+            $scope.map = {{map.javascriptVariable}};
+
+            $scope.user = null;
+            $scope.totalUsers = 0;
+            $scope.usersByLocation = {};
+            $scope.usersByCoordinates = {};
+
+            $scope.users_fetched = {
+                'friends': [],
+                'followers': []
+            };
+
+            $scope.finishFetchUsersForUsername_friends == false;
+            $scope.finishFetchUsersForUsername_followers == false;
+
+            $scope.markers = [];
+
+            $scope.rainbow = new Rainbow();
+            $scope.rainbow.setSpectrum('#FFFF99', 'red');
+            $scope.rainbow.setNumberRange(0, 100);
+
+            /*******************************************************************************************************
+             * Listeners
+             ******************************************************************************************************/
+            $scope.$on('getUserProfileFinished', function() {
+                $scope.fetchUsers();
+            });
+
+            $scope.$on('finishFetchUsersForUsername', function(event, type_of_users) {
+
+                $scope['finishFetchUsersForUsername_' + type_of_users] = true;
+
+
+                if ($scope['finishFetchUsersForUsername_friends'] == true && $scope['finishFetchUsersForUsername_followers'] == true) {
+                    // finish loading of all users (followers and following)
+
+                    //console.log($scope.usersByLocation);
+                    //console.log('xxxxxxxxxxxxxxx');
+                    //console.log($scope.usersByCoordinates['52.37021574.8951679']);
+
+                    $scope.operation_in_progress = "Almost there, let me palce the users on the map...'";
+
+                    $scope.drawAllUsersToMap();
+
+                    usSpinnerService.stop('spinner-operation');
+                    $scope.operation_in_progress = '';
+                    ngProgress.complete();
+                }
+            });
+
+            /*******************************************************************************************************
+             * User Profile
+             ******************************************************************************************************/
+            $scope.getUserProfile = function(username) {
+                $http.get(Routing.generate('get_profile_show', {
+                    'username': username
+                }))
+                    .success(function (response) {
+                        $scope.user = response;
+
+                        // set total users number
+                        $scope.totalUsers = $scope.user.followers_count + $scope.user.friends_count;
+
+                        $scope.$emit('getUserProfileFinished');
+                    })
+                    .error(function (response) {
+                        //growl.error("Fatal, maybe too many requests to Twitter. <br>Please try again later.");
+                    });
+            };
+
+            /*******************************************************************************************************
+             * Fetch user followers and followings
+             ******************************************************************************************************/
+            $scope.fetchUsers = function() {
+                if ($scope.username == '') {
+                    return;
+                }
+
+                $scope.operation_in_progress = 'Preparing your request...';
+                usSpinnerService.spin('spinner-operation');
+                ngProgress.set(0);
+
+                // fetch friends and followers
+                $scope.fetchUsersForUsername($scope.username, null, 'friends');
+                $scope.fetchUsersForUsername($scope.username, null, 'followers');
+
+                // flow follows by event "finishFetchUsersForUsername"
+            };
+
+            $scope.fetchUsersForUsername = function(username, cursor, type_of_users) {
+
+                if (cursor == null || cursor == undefined) { cursor = '-1'; }
+
+                /**
+                 * config
+                 */
+                var url = Routing.generate('get_users_of_username', {
+                    'username': username,
+                    'cursor': cursor,
+                    'type_of_users': type_of_users
+                });
+
+                /**
+                 * request
+                 */
+                $http.get(url)
+                    .success(function (response) {
+
+                        // populate users list
+                        $scope.loadUserInAngular(response.users, response.type_of_users);
+
+                        // update progress bar
+                        var numUsersFetchedSoFar = $scope.getNumFetchedUsersSoFar();
+                        var progressPercentage = ((numUsersFetchedSoFar) / $scope.totalUsers) * 100;
+
+                        // force percentage to reach 50% maximum
+                        ngProgress.set(progressPercentage);
+
+                        // update operation message
+                        $scope.operation_in_progress = $scope.users_fetched.friends.length +'/' + $scope.user.friends_count + ' friends ' +
+                        //'<br>' +
+                        'and '+ $scope.users_fetched.followers.length +'/' + $scope.user.followers_count + ' followers so far, and counting...'
+                            ;
+
+
+                        // load other users
+                        if (response.next_cursor_str == '0' || response.next_cursor_str == undefined) {
+                            //growl.success("Finished loading " + response.type_of_users);
+
+                            $scope.$emit('finishFetchUsersForUsername', response.type_of_users);
+
+                        // users fetching finished
+                        } else {
+                            $scope.fetchUsersForUsername(username, response.next_cursor_str, response.type_of_users);
+                        }
+                    })
+                    .error(function (response) {
+                        growl.error("Fatal, maybe too many requests to Twitter. <br>Please try again later.");
+                    });
+            };
+
+            $scope.getNumFetchedUsersSoFar = function() {
+                return $scope.users_fetched.friends.length + $scope.users_fetched.followers.length;
+            };
+
+            $scope.loadUserInAngular = function(users, type_of_users) {
+                /**
+                 * put users in $scope.users_fetched
+                 */
+                angular.forEach(users, function(user, key) {
+                    if ($scope.users_fetched[type_of_users] == undefined) {
+                        $scope.users_fetched[type_of_users] = [];
+                    }
+
+                    $scope.users_fetched[type_of_users] = $scope.users_fetched[type_of_users].concat([user]);
+                });
+
+                $scope.addUsersToArrayByLocation(users, type_of_users);
+            };
+
+            $scope.getUserFetchedWithLocation = function() {
+                var output = {};
+
+                angular.forEach($scope.users_fetched, function(users, type_of_users) {
+
+                    output[type_of_users] = [];
+
+                    angular.forEach(users, function(user, key) {
+                        if (user.location != undefined && user.location != null && user.location != '') {
+                            output[type_of_users] = output[type_of_users].concat([user]);
+                        }
+                    });
+                });
+
+                return output;
+            };
+
+            $scope.addUsersToList = function(users, list) {
+
+                var output = list;
+
+                angular.forEach(users, function(user, key) {
+
+                    if (output.indexOf(user) < 0) {
+                        output = output.concat(user);
+                    }
+
+                });
+
+                return output;
+            };
+
+            /*******************************************************************************************************
+             * Populate array of users by locations and by coordinates
+             ******************************************************************************************************/
+            $scope.addUsersToArrayByLocation = function(users, type_of_users) {
+
+                var output = $scope.usersByLocation;
+
+                angular.forEach(users, function(user, key) {
+
+                    var location  = user.location;
+                    if (location == '' || location == undefined) {
+                        return;
+                    }
+
+                    if (output[location] == undefined) {
+                        output[location] = {
+                            'friends':      [],
+                            'followers':    []
+                        };
+                    }
+
+                    output[location][type_of_users] = output[location][type_of_users].concat([user]);
+
+                    $scope.insertLocationInLatLong(user.latitude, user.longitude, user.location);
+                });
+            };
+
+            $scope.insertLocationInLatLong = function(lat, long, location) {
+
+                if (lat == null || long == null) {
+                    return;
+                }
+
+                // build key
+                var latLongKey = lat + long;
+
+                // create array if does not exist
+                if ($scope.usersByCoordinates[latLongKey] == undefined) {
+                    $scope.usersByCoordinates[latLongKey] = {
+                        'latitude': lat,
+                        'locations': [],
+                        'longitude': long,
+                        'users': {
+                            'friends': [],
+                            'followers': []
+                        }
+                    };
+                }
+
+                // add location to $scope.usersByCoordinates
+                if ($scope.usersByCoordinates[latLongKey].locations.indexOf(location) < 0) {
+                    $scope.usersByCoordinates[latLongKey].locations = $scope.usersByCoordinates[latLongKey].locations.concat([location]);
+                }
+
+                // add users to $scope.usersByCoordinates
+                for (var type_of_user in $scope.usersByCoordinates[latLongKey].users) {
+
+                    /*
+                    $scope.usersByCoordinates[latLongKey].users[type_of_user] = $scope.usersByCoordinates[latLongKey].users[type_of_user].concat(
+                        $scope.usersByLocation[location][type_of_user]
+                    );
+                    */
+
+                    $scope.usersByCoordinates[latLongKey].users[type_of_user] = $scope.addUsersToList(
+                        $scope.usersByLocation[location][type_of_user],
+                        $scope.usersByCoordinates[latLongKey].users[type_of_user]
+                    )
+                }
+            };
+
+            /*******************************************************************************************************
+             * Add users to map
+             ******************************************************************************************************/
+            $scope.drawAllUsersToMap = function() {
+
+                angular.forEach($scope.usersByCoordinates, function(m, coordinatesKey) {
+                    var m = $scope.usersByCoordinates[coordinatesKey];
+
+                    //console.log(m.latitude, m.longitude, m.locations, m.users);
+
+                    var marker = $scope.addMarkerToMap(m.latitude, m.longitude, m.locations, m.users);
+
+                    $scope.markers = $scope.markers.concat([marker]);
+                });
+            };
+
+            $scope.getIconForMarker = function(number_of_users) {
+
+                var color = $scope.rainbow.colourAt(number_of_users);
+
+                var icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld='+number_of_users+'|' + color + '|000000';
+
+                return icon;
+            };
+
+            $scope.rgbToHex = function(rgb) {
+                rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+                return (rgb && rgb.length === 4) ? "" +
+                ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+                ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+                ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+            };
+
+            $scope.addMarkerToMap = function(lat, long, locations, users_organized_by_type_of_user) {
+                if (lat == null || long == null) {
+                    console.log('latitudine o longitude non disponibile');
+                    return;
+                }
+
+                /**
+                 * create marker
+                 */
+                var myLatlng = new google.maps.LatLng(lat, long);
+
+                var users_length = users_organized_by_type_of_user['friends'].length + users_organized_by_type_of_user['followers'].length;
+
+                var marker = new google.maps.Marker({
+                    position:   myLatlng,
+                    title:      users_length + ' users',
+                    //animation:  google.maps.Animation.DROP,
+                    //draggable:  true,
+                    map:        $scope.map
+                });
+
+                //marker.setIcon('/images/mapiconscollection-numbers-666666-default/number_' + users_length + '.png');
+                marker.setIcon($scope.getIconForMarker(users_length));
+
+                var infowindow_content = '';
+                infowindow_content += '<div class="location-info-window">';
+                //infowindow_content += '<p>' + locations[0] +' ('+lat+','+long+')</p><br>';
+                infowindow_content += '<p>' + locations[0] +'</p><br>';
+
+
+                for (type_of_user in users_organized_by_type_of_user) {
+
+                    var users = users_organized_by_type_of_user[type_of_user];
+
+                    if (users.length <= 0) {
+                        continue;
+                    }
+
+                    infowindow_content += '<p>' + type_of_user + ':</p>';
+
+                    infowindow_content += "<div class='users-wrapper'>";
+                    for (var i in users) {
+                        var user = users[i];
+
+                        infowindow_content += '<span" tooltip="' + user.screen_name + '">' +
+                        '<img src="' + user.profile_image_url + '" /> ' +
+                        '</span>';
+                    }
+                    infowindow_content += '</div>';
+
+                }
+                infowindow_content += '</div>';
+
+                /**
+                 * add info window
+                 */
+                var infowindow = new google.maps.InfoWindow({
+                    content: infowindow_content
+                });
+
+                marker.infowindow = infowindow;
+
+                //google.maps.event.clearListeners(marker, 'click');
+                marker.addListener('click', function() {
+
+                    /**
+                     * close all infowindows
+                     */
+                    angular.forEach($scope.markers, function(marker, key) {
+                        marker.infowindow.close();
+                    });
+
+                    // open infowindow
+                    infowindow.open($scope.map, marker);
+                });
+
+                //$scope.map.setCenter(marker.getPosition());
+
+                return marker;
+            };
+
+            $document.ready(function(){
+                {% if (app.request.get('username')) %}
+                    $scope.getUserProfile($scope.username);
+                {% endif %}
+            })
+        }]);
+    </script>
+
+{% endblock %}

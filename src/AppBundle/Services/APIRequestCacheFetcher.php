@@ -10,61 +10,12 @@ use Symfony\Component\Security\Acl\Exception\Exception;
 
 class APIRequestCacheFetcher
 {
+    protected $twitterOauthDatas;
     protected $em;
-    protected $oauthDatas = array(
-        /*
-         * inmarelibero
-         */
-        array(
-            'consumer_key'    => 'KvQ7VUllDDsrttC5VIHSRfGgX',
-            'consumer_secret' => 'Fu1xvihpyqlpABDpb0WEDeLHaiIOTjnsRj6HbMgzPORgZeaDMi',
-            'token'           => '257724631-mU4KnIJmiy9tOCBS7o90ePwvAMDKplYlUv4OcH4M',
-            'token_secret'    => 'kzjZkWrJPTRqoRIOG0rBVINPamIoPIYppC89ClKBSTXYG'
-        ),
-        array(
-            'consumer_key'    => 'yzHaTT4f1qQzmPwM1rGoln0v1',
-            'consumer_secret' => 'KXEP38Kox78OV7GtBrSUDlTiBrEtnv5FZ4RFJW1elXXq35JZ7v',
-            'token'           => '257724631-DRvOtB58kq1wgUULE37aMaoSiDqs7Mucxr9joHJu',
-            'token_secret'    => 'LXregqb1E3MvmLBkBdDUJZ1aLb7XTlUBObdDRFNiPUscs'
-        ),
-        array(
-            'consumer_key'    => 'lFOzrHBzhkPZ6JTBDmVoEodEY',
-            'consumer_secret' => 'KGvf5IX0UjwjHpFKlCiqKb3JBEBeGkThUjv69c38kDKFKucpHb',
-            'token'           => '257724631-b53sEEG0TlnR49BMdAkp08UhuhBlrsGV3HJtn7F2',
-            'token_secret'    => 'HpaENZRBmJsuCLo3q6527rkRuVoFs5cZt4icE5saKfqUe'
-        ),
-        array(
-            'consumer_key'    => 'c4JULMWWsBrJzRU20z42fbeo6',
-            'consumer_secret' => 'Ptq2Rp5lEhoDIFQI4MzOUHMxAhwHTHKdSBjDoEkhhduAjLAfS6',
-            'token'           => '257724631-JfMpZYqCRjoVgIVdBUUZplhpo5DLJ1pijqjPNlZE',
-            'token_secret'    => 'ZcT6UNKTqzo63ssZVMA4IxgPlTJ7coGT6EozZg21vmdUU'
-        ),
 
-        /*
-         * friendsmappin
-         */
-        array(
-            'consumer_key'    => 'AHHYaiDgGraQq0jmvLACHD9bg',
-            'consumer_secret' => '1raUFdyOoF2w7VIwVYtbB6sKInaDlx82JirLQ7RN2cg9R8fzLr',
-            'token'           => '3001047111-cnkeEKBKvo4GOEjEZPNGPquPrNKRbiPW87xdSpK',
-            'token_secret'    => 'NJAFMowWBrRAk7RDiYQEJsjLdw2ssy6t2IyaYKAIxYHqm'
-        ),
-        array(
-            'consumer_key'    => 'socXS60X8BicTqzW4yoNOxQR0',
-            'consumer_secret' => 'gI4d07zJfG3YdFxH51qUzcrY04JbEIWVTUQaFc2XEIkCQQlQYC',
-            'token'           => '3001047111-JyQa2A5FTluNbjEzfjKo7HpaOf3LMFAnFfYfsyf',
-            'token_secret'    => '90UcvWgRMRbQ44MAXGeXCwrPGXjDGso2s5wYgT4Iq5wY4'
-        ),
-        array(
-            'consumer_key'    => 'ZS5vphgufikxIaplP8GVgzNsI',
-            'consumer_secret' => 'kfOirtKAmemUVmngRdJ05HwzfD9OHiXM78jiAijFJzjBpGBft9',
-            'token'           => '3001047111-AQU70xlg61susjnPHcwZqopNl7KqhxQzOTeo6ER',
-            'token_secret'    => 'Mp1hGDhLslmfVz00jAkgN5cwKO51ZGfIwZbYYtP5rjJ30'
-        ),
-    );
-
-    public function __construct(EntityManager $em)
+    public function __construct(array $twitterOauthDatas, EntityManager $em)
     {
+        $this->twitterOauthDatas = $twitterOauthDatas;
         $this->em = $em;
     }
 
@@ -129,7 +80,7 @@ class APIRequestCacheFetcher
 
     private function getRandomTwitterOAuth()
     {
-        $oauthDatas = $this->oauthDatas[array_rand($this->oauthDatas)];
+        $oauthDatas = $this->twitterOauthDatas[array_rand($this->twitterOauthDatas)];
 
         return new OauthPlugin($oauthDatas);
     }

@@ -6,8 +6,8 @@ parameters:
 services:
     apirequestcache.service:
         class: AppBundle\Services\APIRequestCacheFetcher
-        arguments: ["@doctrine.orm.default_entity_manager"]
+        arguments: ["%twitter_oauth_datas%", "@doctrine.orm.default_entity_manager"]
 
     geocoder_result.service:
         class: AppBundle\Services\GeocoderResultFetcher
-        arguments: ["@doctrine.orm.default_entity_manager", "@ivory_google_map.geocoder"]
+        arguments: ["@doctrine.orm.default_entity_manager", "@ivory_google_map.geocoder", "@jms_serializer"]

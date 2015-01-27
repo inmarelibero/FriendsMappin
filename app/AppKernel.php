@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Ivory\GoogleMapBundle\IvoryGoogleMapBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
 
             new AppBundle\AppBundle(),
         );

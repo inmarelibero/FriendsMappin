@@ -1,69 +1,36 @@
-Symfony Standard Edition
-========================
+FriendsMappin.com
+=================
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony2
-application that you can use as the skeleton for your new applications.
+[FriendsMappin.com](http://friendsmappin.com) displays on a map the follower and followings of a Twitter account.
 
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
+It's just a proof of concept, mantained by Emanuele Gaspari ([@inmarelibero](http://twitter.com/inmarelibero)).
 
-What's inside?
---------------
+Please leave any feedback by creating issue on github, pinging me at [@inmarelibero](http://twitter.com/inmarelibero) or writing me at inmarelibero[at]gmail.com.
 
-The Symfony Standard Edition is configured with the following defaults:
+### Why
 
-  * An AppBundle you can use to start coding;
+The original idea was, for a given Twitter user, to display his followers and followings on a map, by:
 
-  * Twig as the only configured template engine;
+- fetching all friends and followers via Twitter REST APIS
+- geocoding the field __location__ of each user in order to obtain __latitude__ and __longitude__
+- placing a marker which would gruop all users with the same location
 
-  * Doctrine ORM/DBAL;
+So I started working on it with the tools I'm most familiar with: Symfony and some bundles, and Javascript (I chose Angular, even if I'm not so good at it).
 
-  * Swiftmailer;
+Still I don't exactly don't know what this is useful for, if someone finds it, please tell me.
 
-  * Annotations enabled for everything.
+### Technologies
 
-It comes pre-configured with the following bundles:
+Technologies involved in this project are:
 
-  * **FrameworkBundle** - The core Symfony framework bundle
+- [Symfony framework](http://symfony.com), and in particular [MisdGuzzleBundle](https://github.com/misd-service-development/guzzle-bundle), [IvoryGoogleMapBundle](https://github.com/egeloen/IvoryGoogleMapBundle), [BazingaGeocoderBundle](https://github.com/geocoder-php/BazingaGeocoderBundle)
+- [Twitter REST APIs](https://dev.twitter.com/rest/public), with the purpose to verify if we can use the [Streaming APIs](https://dev.twitter.com/streaming/overview)
+- [AngularJS](https://angularjs.org/)
+- Google Maps APIs
 
-  * [**SensioFrameworkExtraBundle**][6] - Adds several enhancements, including
-    template and routing annotation capability
+### Source code
+I decid to release publicly the source code, because if someone had realized this platform as experiment, I would be very glad to see inside.
 
-  * [**DoctrineBundle**][7] - Adds support for the Doctrine ORM
+### License
 
-  * [**TwigBundle**][8] - Adds support for the Twig templating engine
-
-  * [**SecurityBundle**][9] - Adds security by integrating Symfony's security
-    component
-
-  * [**SwiftmailerBundle**][10] - Adds support for Swiftmailer, a library for
-    sending emails
-
-  * [**MonologBundle**][11] - Adds support for Monolog, a logging library
-
-  * [**AsseticBundle**][12] - Adds support for Assetic, an asset processing
-    library
-
-  * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
-    the web debug toolbar
-
-  * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
-    configuring and working with Symfony distributions
-
-  * [**SensioGeneratorBundle**][13] (in dev/test env) - Adds code generation
-    capabilities
-
-All libraries and bundles included in the Symfony Standard Edition are
-released under the MIT or BSD license.
-
-Enjoy!
-
-[1]:  http://symfony.com/doc/2.6/book/installation.html
-[6]:  http://symfony.com/doc/2.6/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  http://symfony.com/doc/2.6/book/doctrine.html
-[8]:  http://symfony.com/doc/2.6/book/templating.html
-[9]:  http://symfony.com/doc/2.6/book/security.html
-[10]: http://symfony.com/doc/2.6/cookbook/email.html
-[11]: http://symfony.com/doc/2.6/cookbook/logging/monolog.html
-[12]: http://symfony.com/doc/2.6/cookbook/assetic/asset_management.html
-[13]: http://symfony.com/doc/2.6/bundles/SensioGeneratorBundle/index.html
+FriendsMappin is released under [MIT License](http://opensource.org/licenses/MIT), fell free to contribute, use, improve and do whatever comes in mind to you.

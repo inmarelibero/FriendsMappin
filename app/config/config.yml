@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: parameters_twitter_oauth_datas.yml }
 
     # bundles
     - { resource: egeloen/IvoryGoogleMapBundle/config.yml }

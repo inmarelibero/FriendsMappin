@@ -51,7 +51,7 @@ ivory_google_map:
         width: "100%"
 
         # Map height
-        height: "600px"
+        height: "100%"
 
         # Custom map options
         # By default, there is no map options
@@ -73,7 +73,7 @@ ivory_google_map:
             # API key used by the provider
             # If you set an API key, this paremeter will be the second parameter provider constructor
             # By default, there is no api key ^_^
-            api_key: "AIzaSyDyw3AtnBaWjWSEO5wjPmdVNI-0AOswtmw"
+            api_key: %geocoder_api_key%
 
             # Locale used by the provider
             # If your set a locale, this parameter will be the second parameter provider constructor if there is no api key else it will be the third

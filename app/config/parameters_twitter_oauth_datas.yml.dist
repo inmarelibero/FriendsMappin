@@ -1,0 +1,20 @@
+######################################################################################################################
+#
+# Populate te file app/config/parameters_twitter_oauth_datas.yml starting from the content of
+# this file with keys and access tokens from your Twitter Apps
+#
+# Go to https://apps.twitter.com to create a Twitter application.
+#
+# The parameter "twitter_oauth_datas" is an array (you can populate it also with a single element)
+# because of the limitations of Twitter REST APIs.
+# To bypass this limitation, the method used here is to use the APIs with different Twitter applications, randomly.
+#
+######################################################################################################################
+
+parameters:
+    twitter_oauth_datas:
+        -
+            consumer_key:       replace_this
+            consumer_secret:    replace_this
+            token:              replace_this
+            token_secret:       replace_this

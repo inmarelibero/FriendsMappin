@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+        <title>{% block title %}Friendsmappin.com{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.1/angular.min.js"></script>
+
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+        {# HEADER STYLESHEETS #}
+        {% stylesheets '@frontend_stylesheets' %}
+            <link rel="stylesheet" type="text/css" href="{{ asset_url }}" />
+        {% endstylesheets %}
+
+        {% if app.environment == 'prod' %}
+            <script>
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-58901174-1', 'auto');
+                ga('send', 'pageview');
+            </script>
+        {% endif %}
+
+    </head>
+    <body ng-app="myApp">
+
+        <div growl></div>
+
+        {% block body '' %}
+
+        {# FOOTER DA ASSETIC #}
+        {% javascripts '@frontend_footer_javascripts' %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+        {# FOSJsRoutingBundle generated routes by controller #}
+        <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+        <script>
+            var app = angular.module('myApp', ['ui.bootstrap', 'angular-growl', 'ngProgress'])
+                .config(function($interpolateProvider){
+                    $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+                })
+            ;
+
+            app.config(['growlProvider', function(growlProvider) {
+                growlProvider.globalTimeToLive(3000);
+                growlProvider.globalDisableCountDown(false);
+            }]);
+        </script>
+        {% block javascripts '' %}
+
+
+    </body>
+</html>

@@ -1,0 +1,227 @@
+<h1><code ng:non-bindable="">Grid</code>
+<span class="hint">(class in module <code ng:non-bindable="">ui.grid</code>
+)</span>
+</h1>
+<div><h2 id="Description">Description</h2>
+<div class="description"><p>Grid is the main viewModel.  Any properties or methods needed to maintain state are defined in
+* this prototype.  One instance of Grid is created per Grid directive instance.</p></div>
+<h2 id="Usage">Usage</h2>
+<div class="usage"><pre class="prettyprint linenums">Grid(options);</pre>
+<h3 id="Parameters">Parameters</h3>
+<ul class="parameters"><li><code ng:non-bindable="">options – {object} – </code>
+<p>Object map of options to pass into the grid. An 'id' property is expected.</p></li>
+</ul>
+</div>
+<div class="member method"><h2 id="Methods">Methods</h2>
+<ul class="methods"><li><h3 id="addRowHeaderColumn">addRowHeaderColumn(column)</h3>
+<div class="addrowheadercolumn"><p>adds a row header column to the grid</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">column – {object} – </code>
+<p>def</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="assignTypes">assignTypes()</h3>
+<div class="assigntypes"><p>uses the first row of data to assign colDef.type for any types not defined.</p></div>
+</li>
+<li><h3 id="buildColumnDefsFromData">buildColumnDefsFromData(rowBuilder)</h3>
+<div class="buildcolumndefsfromdata"><p>Populates columnDefs from the provided data</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">rowBuilder – {function(colDef, col, gridOptions)} – </code>
+<p>function to be called</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="buildColumns">buildColumns()</h3>
+<div class="buildcolumns"><p>creates GridColumn objects from the columnDefinition.  Calls each registered
+columnBuilder to further process the column</p><h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Promise}</code>
+– <p>a promise to load any needed column resources</p></div>
+</div>
+</li>
+<li><h3 id="buildStyles">buildStyles()</h3>
+<div class="buildstyles"><p>calls each styleComputation function</p></div>
+</li>
+<li><h3 id="createLeftContainer">createLeftContainer()</h3>
+<div class="createleftcontainer"><p>creates the left render container if it doesn't already exist</p></div>
+</li>
+<li><h3 id="createRightContainer">createRightContainer()</h3>
+<div class="createrightcontainer"><p>creates the right render container if it doesn't already exist</p></div>
+</li>
+<li><h3 id="flagScrollingHorizontally">flagScrollingHorizontally()</h3>
+<div class="flagscrollinghorizontally"><p>sets isScrollingHorizontally to true and sets it to false in a debounced function</p></div>
+</li>
+<li><h3 id="flagScrollingVertically">flagScrollingVertically()</h3>
+<div class="flagscrollingvertically"><p>sets isScrollingVertically to true and sets it to false in a debounced function</p></div>
+</li>
+<li><h3 id="getColDef">getColDef(name)</h3>
+<div class="getcoldef"><p>returns a grid colDef for the column name</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">name – {string} – </code>
+<p>column.field</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="getColumn">getColumn(name)</h3>
+<div class="getcolumn"><p>returns a grid column for the column name</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">name – {string} – </code>
+<p>column name</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="getColumnSorting">getColumnSorting()</h3>
+<div class="getcolumnsorting"><p>Return the columns that the grid is currently being sorted by</p><h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Array[GridColumn]}</code>
+– <p>An array of GridColumn objects</p></div>
+</div>
+</li>
+<li><h3 id="getRow">getRow(rowEntity)</h3>
+<div class="getrow"><p>returns the GridRow that contains the rowEntity</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">rowEntity – {object} – </code>
+<p>the gridOptions.data array element instance</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="handleWindowResize">handleWindowResize()</h3>
+<div class="handlewindowresize"><p>Triggered when the browser window resizes; automatically resizes the grid</p></div>
+</li>
+<li><h3 id="hasLeftContainer">hasLeftContainer()</h3>
+<div class="hasleftcontainer"><p>returns true if leftContainer exists</p></div>
+</li>
+<li><h3 id="hasLeftContainer">hasLeftContainer()</h3>
+<div class="hasleftcontainer"><p>returns true if rightContainer exists</p></div>
+</li>
+<li><h3 id="isRTL">isRTL()</h3>
+<div class="isrtl"><p>Returns true if grid is RightToLeft</p></div>
+</li>
+<li><h3 id="modifyRows">modifyRows()</h3>
+<div class="modifyrows"><p>creates or removes GridRow objects from the newRawData array.  Calls each registered
+rowBuilder to further process the row</p>
+
+<p>Rows are identified using the gridOptions.rowEquality function</p></div>
+</li>
+<li><h3 id="preCompileCellTemplates">preCompileCellTemplates()</h3>
+<div class="precompilecelltemplates"><p>precompiles all cell templates</p></div>
+</li>
+<li><h3 id="processRowBuilders">processRowBuilders(gridRow)</h3>
+<div class="processrowbuilders"><p>processes all RowBuilders for the gridRow</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">gridRow – {GridRow} – </code>
+<p>reference to gridRow</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{GridRow}</code>
+– <p>the gridRow with all additional behavior added</p></div>
+</div>
+</li>
+<li><h3 id="queueRefresh">queueRefresh()</h3>
+<div class="queuerefresh"><p>todo: @c0bra can you document this method?</p></div>
+</li>
+<li><h3 id="redrawCanvas">redrawCanvas()</h3>
+<div class="redrawcanvas"><p>TBD</p><h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{promise}</code>
+– <p>promise that is resolved when the canvas
+has been refreshed</p></div>
+</div>
+</li>
+<li><h3 id="redrawCanvas">redrawCanvas()</h3>
+<div class="redrawcanvas"><p>Redraw the rows and columns based on our current scroll position</p></div>
+</li>
+<li><h3 id="refresh">refresh()</h3>
+<div class="refresh"><p>Refresh the rendered grid on screen.</p></div>
+</li>
+<li><h3 id="refreshRows">refreshRows()</h3>
+<div class="refreshrows"><p>Refresh the rendered rows on screen?  Note: not functional at present </p><h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{promise}</code>
+– <p>promise that is resolved when render completes?</p></div>
+</div>
+</li>
+<li><h3 id="registerColumnBuilder">registerColumnBuilder(columnsProcessor)</h3>
+<div class="registercolumnbuilder"><p>When the build creates columns from column definitions, the columnbuilders will be called to add
+additional properties to the column.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">columnsProcessor – {function(colDef, col, gridOptions)} – </code>
+<p>function to be called</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="registerColumnsProcessor">registerColumnsProcessor(rows)</h3>
+<div class="registercolumnsprocessor"><p>Register a "columns processor" function. When the columns are updated,
+the grid calls each registered "columns processor", which has a chance
+to alter the set of columns, as long as the count is not modified.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">rows – {function(renderableColumns)} – </code>
+<p>processor function</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Array[GridColumn]}</code>
+– <p>Updated renderable columns</p></div>
+</div>
+</li>
+<li><h3 id="registerRowBuilder">registerRowBuilder(rowBuilder)</h3>
+<div class="registerrowbuilder"><p>When the build creates rows from gridOptions.data, the rowBuilders will be called to add
+additional properties to the row.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">rowBuilder – {function(colDef, col, gridOptions)} – </code>
+<p>function to be called</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="registerRowsProcessor">registerRowsProcessor(rows)</h3>
+<div class="registerrowsprocessor"><p>Register a "rows processor" function. When the rows are updated,
+the grid calls each registered "rows processor", which has a chance
+to alter the set of rows (sorting, etc) as long as the count is not
+modified.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">rows – {function(renderableRows)} – </code>
+<p>processor function</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Array[GridRow]}</code>
+– <p>Updated renderable rows</p></div>
+</div>
+</li>
+<li><h3 id="registerStyleComputation">registerStyleComputation(styleComputation)</h3>
+<div class="registerstylecomputation"><p>registered a styleComputation function</p>
+
+<p>If the function returns a value it will be appended into the grid's <code>&lt;style&gt;</code> block</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">styleComputation – {function($scope)} – </code>
+<p>function</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="removeRowsProcessor">removeRowsProcessor(rows)</h3>
+<div class="removerowsprocessor"><p>Remove a registered rows processor</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">rows – {function(renderableRows)} – </code>
+<p>processor function</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="resetColumnSorting">resetColumnSorting([excludedColumn])</h3>
+<div class="resetcolumnsorting"><p>Return the columns that the grid is currently being sorted by</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">[excludedColumn] – {GridColumn} – </code>
+<p>Optional GridColumn to exclude from having its sorting reset</p></li>
+</ul>
+</div>
+</li>
+<li><h3 id="sortColumn">sortColumn(column, [direction], [add])</h3>
+<div class="sortcolumn"><p>Set the sorting on a given column, optionally resetting any existing sorting on the Grid.
+Emits the sortChanged event whenever the sort criteria are changed.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">column – {GridColumn} – </code>
+<p>Column to set the sorting on</p></li>
+<li><code ng:non-bindable="">[direction] – {uiGridConstants.ASC|uiGridConstants.DESC} – </code>
+<p>Direction to sort by, either descending or ascending.
+If not provided, the column will iterate through the sort directions: ascending, descending, unsorted.</p></li>
+<li><code ng:non-bindable="">[add] – {boolean} – </code>
+<p>Add this column to the sorting. If not provided or set to <code>false</code>, the Grid will reset any existing sorting and sort
+by this column only</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Promise}</code>
+– <p>A resolved promise that supplies the column.</p></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="Properties">Properties</h2>
+<ul class="properties"><li><h3 id="isScrollingHorizontally">isScrollingHorizontally</h3>
+<div class="isscrollinghorizontally"><p>set to true when Grid is scrolling horizontally. Set to false via debounced method</p></div>
+</li>
+<li><h3 id="isScrollingVertically">isScrollingVertically</h3>
+<div class="isscrollingvertically"><p>set to true when Grid is scrolling vertically. Set to false via debounced method</p></div>
+</li>
+</ul>
+</div>
+</div>

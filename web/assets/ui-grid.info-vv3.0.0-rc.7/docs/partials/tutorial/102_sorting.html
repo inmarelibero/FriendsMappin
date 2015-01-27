@@ -1,0 +1,211 @@
+<h1><code ng:non-bindable=""></code>
+<span class="hint"></span>
+</h1>
+<div><p>UI-Grid allows you to sort rows. The feature is on by default. You can set the <code>enableSorting</code> flag in your grid options to enable/disable it.</p>
+
+<p><span class="span8 alert alert-warning">
+  <strong>Note:</strong> You can sort columns by accessing the column menu. You must include ngAnimate in your application if you want the menu to slide up/down, but it's not required.
+</span></p>
+
+<p>Sorting can be disabled at the column level by setting <code>enableSorting: false</code> in the column def. See the last column below for an example.</p>
+
+<p>Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it in action, sort Gender then shift-click Name.</p>
+
+<h3>Source</h3>
+<div source-edit="app" source-edit-deps="angular.js app.js" source-edit-html="index.html-18" source-edit-css="main.css" source-edit-js="app.js" source-edit-unit="" source-edit-scenario=""></div>
+<div class="tabbable"><div class="tab-pane" title="index.html">
+<pre class="prettyprint linenums" ng-set-text="index.html-18" ng-html-wrap-loaded="app angular.js app.js"></pre>
+<script type="text/ng-template" id="index.html-18">
+    <div ng-controller="MainCtrl">
+      Click on a column header to sort by that column. (The third column has sorting disabled.)
+      <br>
+      <br>
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </script>
+</div>
+<div class="tab-pane" title="main.css">
+<pre class="prettyprint linenums" ng-set-text="main.css"></pre>
+<style type="text/css" id="main.css">
+    .grid {
+      width: 500px;
+      height: 200px;
+    }
+  </style>
+</div>
+<div class="tab-pane" title="app.js">
+<pre class="prettyprint linenums" ng-set-text="app.js"></pre>
+<script type="text/ng-template" id="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        enableSorting: true,
+        columnDefs: [
+          { field: 'name' },
+          { field: 'gender' },
+          { field: 'company', enableSorting: false }
+        ]
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </script>
+</div>
+</div><h3>Demo</h3>
+<div class="well doc-example-live animator-container" ng-embed-app="app" ng-set-html="index.html-18" ng-eval-javascript="app.js"></div>
+
+<h1 id="inital-sort">Initial Sort State</h2>
+
+<p>You can set an initial sort state for the grid by defining the <code>sort</code> property on your column definitions. The <code>direction</code> sub-property says which way to sort, and the <code>priority</code> says what order to sort the columns in (lower priority gets sorted first).</p>
+
+<h3>Source</h3>
+<div source-edit="app2" source-edit-deps="angular.js app2.js" source-edit-html="index2.html" source-edit-css="main2.css" source-edit-js="app2.js" source-edit-unit="" source-edit-scenario="scenario.js-19"></div>
+<div class="tabbable"><div class="tab-pane" title="index2.html">
+<pre class="prettyprint linenums" ng-set-text="index2.html"></pre>
+<script type="text/ng-template" id="index2.html">
+    <div ng-controller="MainCtrl">
+      <div id="grid2" ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </script>
+</div>
+<div class="tab-pane" title="main2.css">
+<pre class="prettyprint linenums" ng-set-text="main2.css"></pre>
+<style type="text/css" id="main2.css">
+    .grid {
+      width: 500px;
+      height: 200px;
+    }
+  </style>
+</div>
+<div class="tab-pane" title="app2.js">
+<pre class="prettyprint linenums" ng-set-text="app2.js"></pre>
+<script type="text/ng-template" id="app2.js">
+    var app = angular.module('app2', ['ngAnimate', 'ui.grid']);
+
+    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+      $scope.gridOptions = {
+        enableSorting: true,
+        columnDefs: [
+          {
+            field: 'name',
+            sort: {
+              direction: 'desc',
+              priority: 1
+            }
+          },
+          {
+            field: 'gender',
+            sort: {
+              direction: 'asc',
+              priority: 0
+            }
+          },
+          { field: 'company', enableSorting: false  }
+        ]
+      };
+
+      $http.get('/data/100.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+  </script>
+</div>
+<div class="tab-pane" title="End to end test">
+<pre class="prettyprint linenums" ng-set-text="scenario.js-19"></pre>
+<script type="text/ng-template" id="scenario.js-19">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    
+    describe('first grid on the page, no default sort', function() {
+      it('grid should have three visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
+      });
+  
+      it('header values should be as expected', function () {
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid1', 2, 'Company' );
+      });
+  
+      it('grid should be unsorted by default', function () {
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+      });
+
+      it('sort by name by clicking header', function () {
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );
+      });
+
+      it('reverse sort by name by clicking header', function () {
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
+      });
+      
+      it('return to original sort by name by clicking header', function () {
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.clickHeaderCell( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+      });
+      
+      it('sort asc by clicking menu', function() {
+        gridTestUtils.clickColumnMenuSortAsc( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alexander Foley' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Alisha Myers' );        
+      });
+
+      it('sort desc by clicking menu, then remove sort', function() {
+        gridTestUtils.clickColumnMenuSortDesc( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Yvonne Parsons' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Woods Key' );
+
+        gridTestUtils.clickColumnMenuRemoveSort( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+      });
+      
+      it('sort two columns, gender then name, by shift clicking', function() {
+        gridTestUtils.clickHeaderCell( 'grid1', 1 );
+        gridTestUtils.shiftClickHeaderCell( 'grid1', 0 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Alisha Myers' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Beryl Rice' );
+      });
+
+      it('sort disabled on last column', function() {
+        gridTestUtils.clickHeaderCell( 'grid1', 2 );
+        gridTestUtils.expectCellValueMatch( 'grid1', 0, 0, 'Ethel Price' );
+        gridTestUtils.expectCellValueMatch( 'grid1', 1, 0, 'Claudine Neal' );
+      });
+    });
+
+
+    describe('second grid on the page, has default sort', function() {
+      it('grid should have three visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid2', 3 );
+      });
+  
+      it('header values should be as expected', function () {
+        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 0, 'Name' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 1, 'Gender' );
+        gridTestUtils.expectHeaderCellValueMatch( 'grid2', 2, 'Company' );
+      });
+  
+      it('grid should be sorted by default', function () {
+        gridTestUtils.expectCellValueMatch( 'grid2', 0, 0, 'Yvonne Parsons' );
+        gridTestUtils.expectCellValueMatch( 'grid2', 1, 0, 'Velma Fry' );
+      });
+    });
+
+  </script>
+</div>
+</div><h3>Demo</h3>
+<div class="well doc-example-live animator-container" ng-embed-app="app2" ng-set-html="index2.html" ng-eval-javascript="app2.js"></div></div>

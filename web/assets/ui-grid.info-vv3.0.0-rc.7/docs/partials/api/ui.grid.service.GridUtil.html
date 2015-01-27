@@ -1,0 +1,238 @@
+<h1><code ng:non-bindable="">GridUtil</code>
+<span class="hint">(service in module <code ng:non-bindable="">ui.grid</code>
+)</span>
+</h1>
+<div><h2 id="Description">Description</h2>
+<div class="description"><p>Grid utility functions</p></div>
+<div class="member method"><h2 id="Methods">Methods</h2>
+<ul class="methods"><li><h3 id="createBoundedWrapper">createBoundedWrapper(Object, Method)</h3>
+<div class="createboundedwrapper"><p>Binds given method to given object.</p>
+
+<p>By means of a wrapper, ensures that <code>method</code> is always bound to
+<code>object</code> regardless of its calling environment.
+Iow, inside <code>method</code>, <code>this</code> always points to <code>object</code>.</p>
+
+<p>See http://alistapart.com/article/getoutbindingsituations</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">Object – {object} – </code>
+<p>to bind 'this' to</p></li>
+<li><code ng:non-bindable="">Method – {method} – </code>
+<p>to bind</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Function}</code>
+– <p>The wrapper that performs the binding</p></div>
+</div>
+</li>
+<li><h3 id="debounce">debounce(func, wait, immediate)</h3>
+<div class="debounce"><p>Copied from https://github.com/shahata/angular-debounce
+Takes a function, decorates it to execute only 1 time after multiple calls, and returns the decorated function</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">func – {function} – </code>
+<p>function to debounce</p></li>
+<li><code ng:non-bindable="">wait – {number} – </code>
+<p>milliseconds to delay</p></li>
+<li><code ng:non-bindable="">immediate – {bool} – </code>
+<p>execute before delay</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{function}</code>
+– <p>A function that can be executed as debounced function</p></div>
+<h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+var debouncedFunc =  gridUtil.debounce(function(){alert('debounced');}, 500);
+debouncedFunc();
+debouncedFunc();
+debouncedFunc();
+</pre></div>
+</div>
+</li>
+<li><h3 id="elementHeight">elementHeight(element, [extra])</h3>
+<div class="elementheight"><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">element – {element} – </code>
+<p>DOM element</p></li>
+<li><code ng:non-bindable="">[extra] – {string} – </code>
+<p>Optional modifier for calculation. Use 'margin' to account for margins on element</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{number}</code>
+– <p>Element height in pixels, accounting for any borders, etc.</p></div>
+</div>
+</li>
+<li><h3 id="elementWidth">elementWidth(element, [extra])</h3>
+<div class="elementwidth"><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">element – {element} – </code>
+<p>DOM element</p></li>
+<li><code ng:non-bindable="">[extra] – {string} – </code>
+<p>Optional modifier for calculation. Use 'margin' to account for margins on element</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{number}</code>
+– <p>Element width in pixels, accounting for any borders, etc.</p></div>
+</div>
+</li>
+<li><h3 id="getColumnsFromData">getColumnsFromData(data)</h3>
+<div class="getcolumnsfromdata"><p>Return a list of column names, given a data set</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">data – {string} – </code>
+<p>Data array for grid</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{Object}</code>
+– <p>Column definitions with field accessor and column name</p></div>
+<h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+var data = [
+  { firstName: 'Bob', lastName: 'Jones' },
+  { firstName: 'Frank', lastName: 'Smith' }
+];
+
+var columnDefs = GridUtil.getColumnsFromData(data, excludeProperties);
+
+columnDefs == [
+ {
+   field: 'firstName',
+   name: 'First Name'
+ },
+ {
+   field: 'lastName',
+   name: 'Last Name'
+ }
+];
+</pre></div>
+</div>
+</li>
+<li><h3 id="getTemplate">getTemplate(Either)</h3>
+<div class="gettemplate"><p>Get's template from cache / element / url</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">Either – {string|element|promise} – </code>
+<p>a string representing the template id, a string representing the template url,
+an jQuery/Angualr element, or a promise that returns the template contents to use.</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{object}</code>
+– <p>a promise resolving to template contents</p></div>
+<h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+GridUtil.getTemplate(url).then(function (contents) {
+     alert(contents);
+   })
+</pre></div>
+</div>
+</li>
+<li><h3 id="guessType">guessType(item)</h3>
+<div class="guesstype"><p>guesses the type of an argument</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">item – {string/number/bool/object} – </code>
+<p>variable to examine</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{string}</code>
+– <p>one of the following
+'string'
+'boolean'
+'number'
+'date'
+'object'</p></div>
+</div>
+</li>
+<li><h3 id="newId">newId()</h3>
+<div class="newid"><p>Return a unique ID string</p><h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{string}</code>
+– <p>Unique string</p></div>
+<h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+var id = GridUtil.newId();
+
+# 1387305700482;
+</pre></div>
+</div>
+</li>
+<li><h3 id="normalizeScrollLeft">normalizeScrollLeft(element, scrollLeft)</h3>
+<div class="normalizescrollleft"><p>Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method denormalizes a value for the current browser.</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">element – {element} – </code>
+<p>The element to normalize the <code>scrollLeft</code> value for</p></li>
+<li><code ng:non-bindable="">scrollLeft – {int} – </code>
+<p>The <code>scrollLeft</code> value to denormalize.</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{int}</code>
+– <p>A normalized scrollLeft value for the current browser.</p></div>
+</div>
+</li>
+<li><h3 id="normalizeScrollLeft">normalizeScrollLeft(element)</h3>
+<div class="normalizescrollleft"><p>Browsers currently handle RTL in different ways, resulting in inconsistent scrollLeft values. This method normalizes them</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">element – {element} – </code>
+<p>The element to get the <code>scrollLeft</code> from.</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{int}</code>
+– <p>A normalized scrollLeft value for the current browser.</p></div>
+</div>
+</li>
+<li><h3 id="normalizeWheelEvent">normalizeWheelEvent(event)</h3>
+<div class="normalizewheelevent"><p>Given an event from this list:</p>
+
+<p><code>wheel, mousewheel, DomMouseScroll, MozMousePixelScroll</code></p>
+
+<p>"normalize" it
+so that it stays consistent no matter what browser it comes from (i.e. scale it correctly and make sure the direction is right.)</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">event – {event} – </code>
+<p>A mouse wheel event</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{event}</code>
+– <p>A normalized event</p></div>
+</div>
+</li>
+<li><h3 id="preEval">preEval(path)</h3>
+<div class="preeval"><p>Takes a field path and converts it to bracket notation to allow for special characters in path</p><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">path – {string} – </code>
+<p>Path to evaluate</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{string}</code>
+– <p>A path that is normalized.</p></div>
+<h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+gridUtil.preEval('property') == 'property'
+gridUtil.preEval('nested.deep.prop-erty') = "nested['deep']['prop-erty']"
+</pre></div>
+</div>
+</li>
+<li><h3 id="readableColumnName">readableColumnName(columnName)</h3>
+<div class="readablecolumnname"><h4 id="Parameters">Parameters</h4>
+<ul class="parameters"><li><code ng:non-bindable="">columnName – {string} – </code>
+<p>Column name as a string</p></li>
+</ul>
+<h4 id="Returns">Returns</h4>
+<div class="returns"><code ng:non-bindable="">{string}</code>
+– <p>Column name appropriately capitalized and split apart</p></div>
+<h4 id="Example">Example</h4>
+<div class="example"><h6>Source</h6>
+<div source-edit="app" source-edit-deps="angular.js app.js" source-edit-html="index.html-15" source-edit-css="" source-edit-js="app.js" source-edit-unit="" source-edit-scenario=""></div>
+<div class="tabbable"><div class="tab-pane" title="index.html">
+<pre class="prettyprint linenums" ng-set-text="index.html-15" ng-html-wrap-loaded="app angular.js app.js"></pre>
+<script type="text/ng-template" id="index.html-15">
+   <div ng-controller="MainCtrl">
+     <strong>Column name:</strong> <input ng-model="name" />
+     <br>
+     <strong>Output:</strong> <span ng-bind="columnName(name)"></span>
+   </div>
+ </script>
+</div>
+<div class="tab-pane" title="app.js">
+<pre class="prettyprint linenums" ng-set-text="app.js"></pre>
+<script type="text/ng-template" id="app.js">
+   var app = angular.module('app', ['ui.grid']);
+
+   app.controller('MainCtrl', ['$scope', 'gridUtil', function ($scope, gridUtil) {
+     $scope.name = 'firstName';
+     $scope.columnName = function(name) {
+       return gridUtil.readableColumnName(name);
+     };
+   }]);
+ </script>
+</div>
+</div><h6>Demo</h6>
+<div class="well doc-example-live animator-container" ng-embed-app="app" ng-set-html="index.html-15" ng-eval-javascript="app.js"></div></div>
+</div>
+</li>
+</ul>
+</div>
+</div>

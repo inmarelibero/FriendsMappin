@@ -1,0 +1,37 @@
+# Assetic Configuration
+assetic:
+    debug:          %kernel.debug%
+    use_controller: false
+    bundles:        [AppBundle]
+    #read_from:      "%kernel.root_dir%/.."
+    filters:
+        cssrewrite: ~
+        lessphp:
+            apply_to: "\.less$"
+            formatter: "compressed"
+            preserve_comments: false
+    assets:
+
+        ############################################################################################################
+        # FRONTEND ASSETS
+        ############################################################################################################
+        frontend_lesses:
+            inputs:
+                - less/main.less
+            filters: lessphp
+        frontend_stylesheets:
+            inputs:
+                - assets/angular-growl/angular-growl-2-master/build/angular-growl.min.css
+                - assets/ngProgress/ngProgress.css
+
+                - @frontend_lesses
+            filters: [cssrewrite]
+
+        frontend_footer_javascripts:
+            inputs:
+                - assets/ui-bootstrap/ui-bootstrap-tpls-0.12.0.js
+                - assets/angular-growl/angular-growl-2-master/build/angular-growl.min.js
+                - assets/ngProgress/ngProgress.min.js
+                - js/router.js
+
+            filters: [cssrewrite]

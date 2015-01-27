@@ -1,0 +1,9 @@
+/app/bootstrap.php.cache
+/app/config/parameters.yml
+/app/logs/*
+/build/
+/bin/
+/composer.phar
+
+# ignore latest database dump
+app/Resources/sql/backups/*.latest.sql.gz

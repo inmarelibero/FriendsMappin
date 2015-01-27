@@ -1,0 +1,79 @@
+<h1><code ng:non-bindable="">ColumnDef</code>
+<span class="hint">(api in module <code ng:non-bindable="">ui.grid.edit</code>
+)</span>
+</h1>
+<div><h2 id="Description">Description</h2>
+<div class="description"><p>Column Definition for edit feature, these are available to be 
+set using the ui-grid <a href="#/api/ui.grid.class:GridOptions.columnDef">gridOptions.columnDefs</a></p></div>
+<div class="member property"><h2 id="Properties">Properties</h2>
+<ul class="properties"><li><h3 id="cellEditableCondition">cellEditableCondition</h3>
+<div class="celleditablecondition"><p>If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed.</p><h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+function($scope){
+  //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
+  return true;
+}
+</pre></div>
+</div>
+</li>
+<li><h3 id="editDropdownFilter">editDropdownFilter</h3>
+<div class="editdropdownfilter"><p>A filter that you would like to apply to the values in the options list
+of the dropdown.  For example if you were using angular-translate you might set this
+to <code>'translate'</code></p><h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+$scope.gridOptions = { 
+  columnDefs: [
+    {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor', 
+      editDropdownOptionsArray: [{code: 1, status: 'active'}, {code: 2, status: 'inactive'}],
+      editDropdownIdLabel: 'code', editDropdownValueLabel: 'status', editDropdownFilter: 'translate' }
+  ],
+</pre></div>
+</div>
+</li>
+<li><h3 id="editDropdownIdLabel">editDropdownIdLabel</h3>
+<div class="editdropdownidlabel"><p>the label for the "id" field
+in the editDropdownOptionsArray.  Defaults
+to 'id'</p><h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+$scope.gridOptions = { 
+  columnDefs: [
+    {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor', 
+      editDropdownOptionsArray: [{code: 1, status: 'active'}, {code: 2, status: 'inactive'}],
+      editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
+  ],
+</pre></div>
+</div>
+</li>
+<li><h3 id="editDropdownOptionsArray">editDropdownOptionsArray</h3>
+<div class="editdropdownoptionsarray"><p>an array of values in the format
+[ {id: xxx, value: xxx} ], which is populated
+into the edit dropdown</p></div>
+</li>
+<li><h3 id="editDropdownValueLabel">editDropdownValueLabel</h3>
+<div class="editdropdownvaluelabel"><p>the label for the "value" field
+in the editDropdownOptionsArray.  Defaults
+to 'value'</p><h4 id="Example">Example</h4>
+<div class="example"><pre class="prettyprint linenums">
+$scope.gridOptions = { 
+  columnDefs: [
+    {name: 'status', editableCellTemplate: 'ui-grid/dropdownEditor', 
+      editDropdownOptionsArray: [{code: 1, status: 'active'}, {code: 2, status: 'inactive'}],
+      editDropdownIdLabel: 'code', editDropdownValueLabel: 'status' }
+  ],
+</pre></div>
+</div>
+</li>
+<li><h3 id="editableCellTemplate">editableCellTemplate</h3>
+<div class="editablecelltemplate"><p>cell template to be used when editing this column. Can be Url or text template
+<br/>Defaults to gridOptions.editableCellTemplate</p></div>
+</li>
+<li><h3 id="enableCellEdit">enableCellEdit</h3>
+<div class="enablecelledit"><p>enable editing on column</p></div>
+</li>
+<li><h3 id="enableCellEditOnFocus">enableCellEditOnFocus</h3>
+<div class="enablecelleditonfocus"><p>If true, then editor is invoked as soon as cell receives focus. Default false.
+<br><em>requires both the cellNav feature and the edit feature to be enabled</em></p></div>
+</li>
+</ul>
+</div>
+</div>

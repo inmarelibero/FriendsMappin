@@ -11,13 +11,13 @@ Please leave any feedback by creating issue on github, pinging me at [@inmarelib
 
 The original idea was, for a given Twitter user, to display his followers and followings on a map, by:
 
-- fetching all friends and followers via Twitter REST APIS
+- fetching all friends and followers via Twitter REST APIs
 - geocoding the field __location__ of each user in order to obtain __latitude__ and __longitude__
-- placing a marker which would gruop all users with the same location
+- placing a marker which would group all users with the same location
 
 So I started working on it with the tools I'm most familiar with: Symfony and some bundles, and Javascript (I chose Angular, even if I'm not so good at it).
 
-Still I don't exactly don't know what this is useful for, if someone finds it, please tell me.
+Still I don't exactly know what this is useful for, if someone finds it, please tell me.
 
 ### Technologies
 
@@ -29,7 +29,7 @@ Technologies involved in this project are:
 - Google Maps APIs
 
 ### Source code
-I decid to release publicly the source code, because if someone had realized this platform as experiment, I would be very glad to see inside.
+I decide to release publicly the source code, because if someone had realized this platform as experiment, I would be very glad to see inside.
 
 ### License
 

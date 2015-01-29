@@ -27,7 +27,7 @@ ivory_google_map:
 
         # Zoom of the map
         # If the autozoom flag is enabled, the zoom is not used
-        zoom: 2
+        zoom: 3
 
         # Bound of the map
         # If the auto zoom flag is not enabled, the bound is not used

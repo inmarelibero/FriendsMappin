@@ -104,13 +104,13 @@
             <div class="container-fluid">
                 <p class="navbar-text">
 
-                        {% if (app.request.get('username')) %}
-                            <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
-                        {% else %}
-                            <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Show on a map where your Twitter followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
-                        {% endif %}
+                    {% if (app.request.get('username')) %}
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                    {% else %}
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Show on a map where your Twitter followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                    {% endif %}
 
-                    Quite buggy, not completely working, but cool proof of concept by <a href="https://twitter.com/inmarelibero" target="_blank">inmarelibero</a>.
+                    Buggy and not completely working proof of concept by <a href="https://twitter.com/inmarelibero" target="_blank">inmarelibero</a>. Released open source at <a ref="https://github.com/inmarelibero/FriendsMappin">inmarelibero/FriendsMappin</a>.
 
                 </p>
             </div>

@@ -10,7 +10,8 @@ ul {
 }
 
 #right-panel {
-  //overflow-x: auto;
+  overflow: auto;
+  overflow-x: auto;
   position: absolute;
   z-index: 1001;
 
@@ -54,6 +55,11 @@ ul {
 .location-info-window {
   p {
     margin: 0px;
+
+    &.location {
+      font-size: 16px;
+      font-weight: bold;
+    }
   }
 
   .users-wrapper {
@@ -62,6 +68,7 @@ ul {
     img {
       float: left;
       margin: 2px;
+      width: 30px;
     }
   }
 }

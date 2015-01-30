@@ -76,6 +76,19 @@
 
             $scope.init = function() {
                 $scope.rainbow = $scope.initializeRainbow();
+
+                $scope.markerCluster = new MarkerClusterer($scope.map, [], {
+                    gridSize: 40,
+                    minimumClusterSize: 5
+                    /*
+                    calculator: function (markers, numStyles) {
+                        return {
+                            text: markers.length,
+                            index: numStyles
+                        };
+                    }
+                    */
+                });
             };
 
             /*******************************************************************************************************
@@ -321,6 +334,8 @@
                     // open infowindow
                     marker.infowindow.open($scope.map, marker);
                 });
+
+                $scope.markerCluster.addMarker(marker);
 
                 return marker;
             };

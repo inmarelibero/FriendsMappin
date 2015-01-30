@@ -2,55 +2,30 @@
 
 {% block body %}
 
-    <div>
-
-        <div id="wrapper-fullscreen">
-
-            <div id="map-wrapper">
-                {{ google_map(map) }}
-            </div>
-            <div id="map-modal" class="ng-hide" ng-show="operation_in_progress != ''">
-                <p style="position:relative; display: inline-block; padding-left: 28px;">
-                    <span us-spinner="{radius:4, width:2, length: 3, color: '#FFF'}" spinner-key="spinner-operation" style="position: relative; left: 13px; top: 10px; position: absolute;"></span>
-
-                    {[{ operation_in_progress }]}
-                </p>
-                {#
-
-                <br><br>
-                <p style="font-size: 12px;">
-                    While waiting, consider spreading the voice via
-                    {% if (app.request.get('username')) %}
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
-                    {% else %}
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Find where your followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
-                    {% endif %}
-                </p>
-                #}
-            </div>
-
-            <div id="right-panel">
-                <ul class="users-loaded">
-                    <li class="title" ng-show="getUserFetchedWithLocation().friends.length > 0">Friends ({[{ getUserFetchedWithLocation().friends.length }]})</li>
-                    <li ng-repeat="user in getUserFetchedWithLocation().friends">
-                        <span tooltip="{[{ user.screen_name }]}">
-                            <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
-                        </span>
-                    </li>
-                </ul>
-                <br ng-show="friends_markers.length > 0 && followers_markers.length > 0">
-                <ul class="users-loaded">
-                    <li class="title" ng-show="getUserFetchedWithLocation().followers.length > 0">Followers ({[{ getUserFetchedWithLocation().followers.length }]})</li>
-                    <li ng-repeat="user in getUserFetchedWithLocation().followers">
-                        <span tooltip="{[{ user.screen_name }]}">
-                            <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
-                        </span>
-                    </li>
-                </ul>
-            </div>
-
+    <div id="wrapper-fullscreen">
+        <div id="map-wrapper">
+            {{ google_map(map) }}
         </div>
+    </div>
 
+    <div id="right-panel">
+        <ul class="users-loaded">
+            <li class="title" ng-show="getUserFetchedWithLocation().friends.length > 0">Friends ({[{ getUserFetchedWithLocation().friends.length }]})</li>
+            <li ng-repeat="user in getUserFetchedWithLocation().friends">
+                <span tooltip="{[{ user.screen_name }]}">
+                    <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                </span>
+            </li>
+        </ul>
+        <br ng-show="friends_markers.length > 0 && followers_markers.length > 0">
+        <ul class="users-loaded">
+            <li class="title" ng-show="getUserFetchedWithLocation().followers.length > 0">Followers ({[{ getUserFetchedWithLocation().followers.length }]})</li>
+            <li ng-repeat="user in getUserFetchedWithLocation().followers">
+                <span tooltip="{[{ user.screen_name }]}">
+                    <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                </span>
+            </li>
+        </ul>
     </div>
 
 {% endblock %}

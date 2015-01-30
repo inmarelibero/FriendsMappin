@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "235acb666568f7aabdab2bd906b87fa4",
+    "hash": "f7f9951541a927f493fcdab914bfb09f",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -980,16 +980,16 @@
         },
         {
             "name": "gedmo/doctrine-extensions",
-            "version": "v2.3.10",
+            "version": "v2.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Atlantic18/DoctrineExtensions.git",
-                "reference": "4e9bbd54ebb22bb004b2ec71b1b0ce3ed5b992d0"
+                "reference": "5e19886a64ef7e3540bb362eacfdf7d60c5608e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/4e9bbd54ebb22bb004b2ec71b1b0ce3ed5b992d0",
-                "reference": "4e9bbd54ebb22bb004b2ec71b1b0ce3ed5b992d0",
+                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/5e19886a64ef7e3540bb362eacfdf7d60c5608e6",
+                "reference": "5e19886a64ef7e3540bb362eacfdf7d60c5608e6",
                 "shasum": ""
             },
             "require": {
@@ -1054,7 +1054,7 @@
                 "tree",
                 "uploadable"
             ],
-            "time": "2015-01-21 20:55:10"
+            "time": "2015-01-28 09:12:46"
         },
         {
             "name": "guzzle/guzzle",
@@ -1989,16 +1989,16 @@
         },
         {
             "name": "sensiolabs/security-checker",
-            "version": "v2.0.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/security-checker.git",
-                "reference": "5b4eb4743ebe68276c911c84101ecdf4a9ae76ee"
+                "reference": "134cecf1c61256bd8e973e11376891a724543820"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/5b4eb4743ebe68276c911c84101ecdf4a9ae76ee",
-                "reference": "5b4eb4743ebe68276c911c84101ecdf4a9ae76ee",
+                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/134cecf1c61256bd8e973e11376891a724543820",
+                "reference": "134cecf1c61256bd8e973e11376891a724543820",
                 "shasum": ""
             },
             "require": {
@@ -2030,7 +2030,7 @@
                 }
             ],
             "description": "A security checker for your composer.lock",
-            "time": "2014-07-19 10:52:35"
+            "time": "2015-01-26 16:25:19"
         },
         {
             "name": "stof/doctrine-extensions-bundle",
@@ -2147,32 +2147,33 @@
         },
         {
             "name": "symfony/assetic-bundle",
-            "version": "v2.6.0",
+            "version": "v2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/AsseticBundle.git",
-                "reference": "39d0e15b63936464a9929c00f8e28a30f2331419"
+                "reference": "422b0add2110f0cf9bc7a873a386ea053f4a89f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/AsseticBundle/zipball/39d0e15b63936464a9929c00f8e28a30f2331419",
-                "reference": "39d0e15b63936464a9929c00f8e28a30f2331419",
+                "url": "https://api.github.com/repos/symfony/AsseticBundle/zipball/422b0add2110f0cf9bc7a873a386ea053f4a89f0",
+                "reference": "422b0add2110f0cf9bc7a873a386ea053f4a89f0",
                 "shasum": ""
             },
             "require": {
                 "kriswallsmith/assetic": "~1.2",
                 "php": ">=5.3.0",
-                "symfony/console": "~2.1",
-                "symfony/framework-bundle": "~2.1",
-                "symfony/yaml": "~2.1"
+                "symfony/console": "~2.3",
+                "symfony/dependency-injection": "~2.3",
+                "symfony/framework-bundle": "~2.3",
+                "symfony/yaml": "~2.3"
             },
             "require-dev": {
                 "kriswallsmith/spork": "~0.2",
                 "patchwork/jsqueeze": "~1.0",
-                "symfony/class-loader": "~2.1",
-                "symfony/css-selector": "~2.1",
-                "symfony/dom-crawler": "~2.1",
-                "symfony/twig-bundle": "~2.1"
+                "symfony/class-loader": "~2.3",
+                "symfony/css-selector": "~2.3",
+                "symfony/dom-crawler": "~2.3",
+                "symfony/twig-bundle": "~2.3"
             },
             "suggest": {
                 "kriswallsmith/spork": "to be able to dump assets in parallel",
@@ -2207,7 +2208,7 @@
                 "compression",
                 "minification"
             ],
-            "time": "2015-01-26 13:00:20"
+            "time": "2015-01-27 12:45:16"
         },
         {
             "name": "symfony/monolog-bundle",
@@ -2440,6 +2441,55 @@
                 "framework"
             ],
             "time": "2015-01-07 14:47:29"
+        },
+        {
+            "name": "toopay/assetic-minifier",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/toopay/assetic-minifier.git",
+                "reference": "0d158ee9d349515172975ccc18b0998905e4431e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/toopay/assetic-minifier/zipball/0d158ee9d349515172975ccc18b0998905e4431e",
+                "reference": "0d158ee9d349515172975ccc18b0998905e4431e",
+                "shasum": ""
+            },
+            "require": {
+                "kriswallsmith/assetic": "~1.1",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~3.7",
+                "symfony/symfony": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Minifier": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Taufan Aditya"
+                },
+                {
+                    "name": "Pascal Thormeier",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "Assetic Filter for pure PHP JS and CSS minification",
+            "homepage": "https://github.com/toopay/assetic-minifier",
+            "keywords": [
+                "compression",
+                "minification"
+            ],
+            "time": "2014-05-18 15:19:21"
         },
         {
             "name": "twig/extensions",

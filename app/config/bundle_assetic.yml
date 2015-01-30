@@ -3,7 +3,6 @@ assetic:
     debug:          %kernel.debug%
     use_controller: false
     bundles:        [AppBundle]
-    #read_from:      "%kernel.root_dir%/.."
     filters:
         cssrewrite: ~
         lessphp:
@@ -21,20 +20,41 @@ assetic:
             filters: lessphp
         frontend_stylesheets:
             inputs:
+                - assets/bootstrap-3.3.2/bootstrap.min.css
+                - assets/bootstrap-3.3.2/bootstrap-theme.min.css
                 - assets/angular-growl/angular-growl-2-master/build/angular-growl.min.css
                 - assets/ngProgress/ngProgress.css
 
                 - @frontend_lesses
-            filters: [cssrewrite]
+            filters: [?minifier_css, cssrewrite]
 
+        # header javascript
+        frontend_header_javascripts_cssrewrite:
+            inputs: []
+            filters: [cssrewrite]
+        frontend_header_javascripts:
+            inputs:
+                - assets/AngularJS/1.4.0-beta.1/angular.min.js
+                #- assets/AngularJS/1.4.0-beta.1/angular-sanitize.min.js
+            filters: [?minifier_js]
+
+        # footer javascript
+        frontend_foooter_javascripts_cssrewrite:
+            inputs: []
+            filters: [cssrewrite]
         frontend_footer_javascripts:
             inputs:
+                - assets/jquery-1.11.2/jquery-1.11.2.min.js
+                - assets/jquery-1.11.2/jquery-migrate-1.2.1.min.js
+                - assets/bootstrap-3.3.2/bootstrap.min.js
+                - assets/js-marker-clusterer/markerclusterer_compiled.js
+                - assets/RainbowVis-JS/rainbowvis.js
                 - assets/ui-bootstrap/ui-bootstrap-tpls-0.12.0.js
                 - assets/angular-growl/angular-growl-2-master/build/angular-growl.min.js
                 - assets/ngProgress/ngProgress.min.js
                 - assets/spinjs/spin.min.js
                 - assets/angular-spinner-0.6.1/angular-spinner.min.js
                 - assets/RainbowVis-JS/rainbowvis.js
-                - js/router.js
+                - %kernel.root_dir%/../web/bundles/fosjsrouting/js/router.js
 
-            filters: [cssrewrite]
+            filters: [?minifier_js]

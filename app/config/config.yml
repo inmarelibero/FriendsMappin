@@ -5,9 +5,10 @@ imports:
     - { resource: parameters_twitter_oauth_datas.yml }
 
     # bundles
+    - { resource: bundle_assetic.yml }
     - { resource: egeloen/IvoryGoogleMapBundle/config.yml }
     - { resource: stof/StofDoctrineExtensionsBundle/config.yml }
-    - { resource: bundle_assetic.yml }
+    - { resource: toopay/assetic-minifier/config.yml }
 
 framework:
     #esi:             ~

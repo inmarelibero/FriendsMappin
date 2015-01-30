@@ -348,13 +348,15 @@
 
                 infowindow_content += '<div class="location-info-window">';
 
-                infowindow_content += '<p>' + marker.locations[0] +'</p><br>';
+                infowindow_content += '<p class="location">' + marker.locations[0] +'</p><br>';
 
                 angular.forEach(marker.users, function(users, type_of_users) {
 
                     if (users.length <= 0) return;
 
-                    infowindow_content += '<p>' + type_of_users + ':</p>';
+                    var p = type_of_users.charAt(0).toUpperCase() + type_of_users.slice(1);
+
+                    infowindow_content += '<p>' + p + ' ('+users.length+'):</p>';
 
                     infowindow_content += "<div class='users-wrapper'>";
 

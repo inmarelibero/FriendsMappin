@@ -430,6 +430,12 @@
                 }, 3000);
             };
 
+            $scope.showSingleOperationMessage = function(message) {
+                $scope.operation_in_progress = message;
+
+                $scope.closeOperationMessage();
+            };
+
             /*******************************************************************************************************
              * Clicks
              ******************************************************************************************************/
@@ -444,6 +450,9 @@
                 $scope.setCenterOnMap($scope.map, position);
 
                 google.maps.event.trigger(marker, 'click');
+
+                //$scope.showSingleOperationMessage('Map centered on <a href="http://twitter.com/'+user.screen_name+'">@' + user.screen_name + '</a> at '+user.latitude + ',' + user.longitude);
+                $scope.showSingleOperationMessage('Centered on @' + user.screen_name + ' at '+user.latitude + ',' + user.longitude);
             };
 
             /*******************************************************************************************************

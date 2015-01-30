@@ -86,6 +86,25 @@
                     </div>
                 </div>
             </nav>
+            <div id="alert-operation" class="ng-hide" ng-show="operation_in_progress != ''">
+                <p class="message">
+                    <span us-spinner="{radius:4, width:2, length: 3, color: '#FFF'}" spinner-key="spinner-operation" style="position: relative; left: 15px; top: 13px; position: absolute;"></span>
+
+                    {[{ operation_in_progress }]}
+                </p>
+                {#
+
+                <br><br>
+                <p style="font-size: 12px;">
+                    While waiting, consider spreading the voice via
+                    {% if (app.request.get('username')) %}
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                    {% else %}
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Find where your followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                    {% endif %}
+                </p>
+                #}
+            </div>
         {% endblock %}
 
         {% block body '' %}

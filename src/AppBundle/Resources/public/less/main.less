@@ -70,6 +70,7 @@ ul {
   z-index: 1000;
   border-radius: 0px;
 
+  margin: 0px;
   padding-right: 20%;
 
   .navbar-header {
@@ -91,8 +92,35 @@ ul {
   }
 }
 
+#alert-operation {
+  z-index: 200;
+  position: relative;
+
+  text-align: center;
+  margin-right: 20%;
+
+  p.message {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+
+    color:  #FFF;
+    font-size: 14px;
+    padding: 10px;
+    background: rgb(0,0,0,0.6);
+    margin: 0px;
+    position:relative;
+    display: inline-block;
+    padding: 3px 20px;
+    padding-left: 28px;
+  }
+
+  iframe {
+    margin-bottom: -5px;
+  }
+}
+
 #wrapper-fullscreen {
-  //z-index: 999;
+  z-index: 100;
 
   position: absolute;
   top:    0;
@@ -109,6 +137,7 @@ ul {
     left:   0;
   }
 
+  /*
   #map-modal {
     z-index: 901;
     position: absolute;
@@ -131,4 +160,5 @@ ul {
       margin-bottom: -5px;
     }
   }
+  */
 }

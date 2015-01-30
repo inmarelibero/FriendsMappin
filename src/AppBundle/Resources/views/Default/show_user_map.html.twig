@@ -12,18 +12,18 @@
         <ul class="users-loaded">
             <li class="title" ng-show="getUserFetchedWithLocation().friends.length > 0">Friends ({[{ getUserFetchedWithLocation().friends.length }]})</li>
             <li ng-repeat="user in getUserFetchedWithLocation().friends">
-                <span tooltip="{[{ user.screen_name }]}">
+                <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)">
                     <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
-                </span>
+                </a>
             </li>
         </ul>
         <br ng-show="friends_markers.length > 0 && followers_markers.length > 0">
         <ul class="users-loaded">
             <li class="title" ng-show="getUserFetchedWithLocation().followers.length > 0">Followers ({[{ getUserFetchedWithLocation().followers.length }]})</li>
             <li ng-repeat="user in getUserFetchedWithLocation().followers">
-                <span tooltip="{[{ user.screen_name }]}">
+                <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)">
                     <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
-                </span>
+                </a>
             </li>
         </ul>
     </div>
@@ -77,17 +77,14 @@
                 if ($scope['finishFetchFriendsAndFollowers_friends'] == true && $scope['finishFetchFriendsAndFollowers_followers'] == true) {
                     // finish loading of all users (followers and following)
 
+
                     //console.log($scope.markers);
                     //console.log('xxxxxxxxxxxxxxx');
+                    //console.log($scope.users_fetched);
 
-                    /*
-                    $scope.operation_in_progress = "Almost there, let me palce the users on the map...";
-                    $scope.drawAllUsersToMap();
-                    */
-
-                    usSpinnerService.stop('spinner-operation');
-                    $scope.operation_in_progress = '';
                     ngProgress.complete();
+                    $scope.setOperationMessage('Done!');
+                    $scope.closeOperationMessage();
                 }
             });
 
@@ -122,7 +119,7 @@
                     return;
                 }
 
-                $scope.operation_in_progress = 'Preparing your request...';
+                $scope.setOperationMessage('Preparing your request...');
                 usSpinnerService.spin('spinner-operation');
                 ngProgress.set(0);
 
@@ -198,7 +195,6 @@
                     if ($scope.users_fetched[type_of_users] == undefined) {
                         $scope.users_fetched[type_of_users] = [];
                     }
-
                     // add the single user to the list
                     $scope.users_fetched[type_of_users] = $scope.users_fetched[type_of_users].concat([user]);
 
@@ -217,7 +213,7 @@
                     output[type_of_users] = [];
 
                     angular.forEach(users, function(user, key) {
-                        if (user.location != undefined && user.location != null && user.location != '') {
+                        if (user.latitude != null && user.longitude != null) {
                             output[type_of_users] = output[type_of_users].concat([user]);
                         }
                     });
@@ -257,12 +253,25 @@
                 // retrieve marker if already present in list
                 var latLonKey = $scope.getCoordinatesKeyFromCoordinates(lat, lon);
 
-                var marker = $scope.markers[latLonKey];
+                var marker = $scope.retrieveMarker(lat, lon);
 
-                if (marker == undefined) {
+                if (marker == null) {
                     marker = $scope.createMarker(lat, lon);
 
                     $scope.markers[latLonKey] = marker;
+                }
+
+                return marker;
+            };
+
+            $scope.retrieveMarker = function(lat, lon) {
+                // retrieve marker if already present in list
+                var latLonKey = $scope.getCoordinatesKeyFromCoordinates(lat, lon);
+
+                var marker = $scope.markers[latLonKey];
+
+                if (marker == undefined) {
+                    return null;
                 }
 
                 return marker;
@@ -350,7 +359,7 @@
                     infowindow_content += "<div class='users-wrapper'>";
 
                     angular.forEach(users, function(user, key) {
-                        infowindow_content += '<span" tooltip="' + user.screen_name + '">' +
+                        infowindow_content += '<span tooltip="' + user.screen_name + '">' +
                             '<img src="' + user.profile_image_url + '" /> ' +
                         '</span>';
                     });
@@ -380,7 +389,6 @@
                     if (output.indexOf(user) < 0) {
                         output = output.concat(user);
                     }
-
                 });
 
                 return output;
@@ -400,6 +408,42 @@
                 rainbow.setNumberRange(0, 100);
 
                 return rainbow;
+            };
+
+            /**
+             * Set the center on a given map
+             */
+            $scope.setCenterOnMap = function(map, position) {
+                map.setCenter(position);
+                map.setZoom(9);
+            };
+
+            $scope.setOperationMessage = function(message) {
+                $scope.operation_in_progress = message;
+            };
+
+            $scope.closeOperationMessage = function() {
+                usSpinnerService.stop('spinner-operation');
+
+                setTimeout(function() {
+                    $scope.operation_in_progress = '';
+                }, 3000);
+            };
+
+            /*******************************************************************************************************
+             * Clicks
+             ******************************************************************************************************/
+            $scope.handleClickOnUser = function(user) {
+                var marker = $scope.retrieveMarker(user.latitude, user.longitude);
+
+                if (marker == null) {
+                    return;
+                }
+
+                var position = new google.maps.LatLng(user.latitude, user.longitude);
+                $scope.setCenterOnMap($scope.map, position);
+
+                google.maps.event.trigger(marker, 'click');
             };
 
             /*******************************************************************************************************

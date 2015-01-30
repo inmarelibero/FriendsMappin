@@ -16,25 +16,12 @@
         <meta property="og:url" content="{{ app.request.uri }}" />
         <meta property="og:description" content="Quite buggy, not completely working, but cool proof of concept. By inmarelibero." />
 
-
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.1/angular.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.1/angular-sanitize.js"></script>
-
-
-        {# https://github.com/anomal/RainbowVis-JS #}
-        <script src="{{ asset('assets/RainbowVis-JS/rainbowvis.js') }}"></script>
-
-        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-
-        <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-
-        <script type="text/javascript" src="https://googlemaps.github.io/js-marker-clusterer/src/markerclusterer_compiled.js"></script>
+        {# HEADER JAVASCRIPT #}
+        {% javascripts '@frontend_header_javascripts' %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
 
         {# HEADER STYLESHEETS #}
         {% stylesheets '@frontend_stylesheets' %}
@@ -54,7 +41,8 @@
         {% endif %}
 
     </head>
-    <body ng-app="myApp" ng-controller="GreetingController">
+
+    <body ng-app="mainApp" ng-controller="FriendsMappinController">
 
         <div growl></div>
 
@@ -118,7 +106,7 @@
             </div>
         </nav>
 
-        {# FOOTER DA ASSETIC #}
+        {# FOOTER JAVASCRIPT #}
         {% javascripts '@frontend_footer_javascripts' %}
             <script type="text/javascript" src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -127,15 +115,17 @@
         <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
         <script>
-            var app = angular.module('myApp', ['ui.bootstrap', 'angular-growl', 'ngProgress', 'angularSpinner'])
+            var app = angular.module('mainApp', ['ui.bootstrap', 'angular-growl', 'ngProgress', 'angularSpinner'])
                 .config(function($interpolateProvider){
                     $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
                 })
-            ;
+                .config(['growlProvider', function(growlProvider) {
+                    growlProvider.globalTimeToLive(3000);
+                    growlProvider.globalDisableCountDown(false);
+                }]);
 
-            app.config(['growlProvider', function(growlProvider) {
-                growlProvider.globalTimeToLive(3000);
-                growlProvider.globalDisableCountDown(false);
+            app.controller('FriendsMappinController', ['$scope', '$http', 'growl', '$document', 'ngProgress', 'usSpinnerService', function($scope, $http, growl, $document, ngProgress, usSpinnerService) {
+
             }]);
         </script>
 

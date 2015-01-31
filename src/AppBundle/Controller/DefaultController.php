@@ -56,12 +56,7 @@ class DefaultController extends Controller
      */
     public function showUserMapAction(Request $request)
     {
-        // map
-        $map = $this->get('ivory_google_map.map');
-
-        return array(
-            'map' => $map,
-        );
+        return array();
     }
 
     /**

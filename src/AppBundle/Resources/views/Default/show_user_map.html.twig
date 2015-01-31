@@ -4,11 +4,20 @@
 
     <div id="wrapper-fullscreen">
         <div id="map-wrapper">
-            {{ google_map(map) }}
+            <div id="map_canvas" style="width: 100%; height: 100%"></div>
         </div>
     </div>
 
     <div id="right-panel">
+
+        <input
+            type="button"
+            class="ng-hide btn btn-primary"
+            ng-value="(heatmap_visible == true) ? 'Hide Heatmap':'Show Heatmap'"
+            ng-click="toggleHeatmap()"
+            ng-show="user_fetch_finished == true"
+        />
+
         <ul class="users-loaded">
             <li class="title" ng-show="getUserFetchedWithLocation().friends.length > 0">Friends ({[{ getUserFetchedWithLocation().friends.length }]})</li>
             <li ng-repeat="user in getUserFetchedWithLocation().friends">
@@ -34,7 +43,10 @@
 
     <script>
         app.controller('FriendsMappinController', ['$scope', '$http', 'growl', '$document', 'ngProgress', 'usSpinnerService', function($scope, $http, growl, $document, ngProgress, usSpinnerService) {
-            $scope.map = {{map.javascriptVariable}};
+            $scope.map = new google.maps.Map(document.getElementById('map_canvas'), {
+                center: { lat: 48.856614, lng: 2.352222},
+                zoom: 3
+            });
 
             $scope.user = null;
             $scope.totalUsers = 0;
@@ -43,6 +55,9 @@
                 'friends': [],
                 'followers': []
             };
+
+            $scope.user_fetch_finished = false;
+            $scope.heatmap_visible = false;
 
             $scope.finishFetchUsersForUsername_friends == false;
             $scope.finishFetchUsersForUsername_followers == false;
@@ -73,7 +88,6 @@
 
                 $scope['finishFetchFriendsAndFollowers_' + type_of_users] = true;
 
-
                 if ($scope['finishFetchFriendsAndFollowers_friends'] == true && $scope['finishFetchFriendsAndFollowers_followers'] == true) {
                     // finish loading of all users (followers and following)
 
@@ -85,7 +99,18 @@
                     ngProgress.complete();
                     $scope.setOperationMessage('Done!');
                     $scope.closeOperationMessage();
+
+                    $scope.$emit('finish_user_fetching');
                 }
+            });
+
+            /*
+            $scope.$on('start_user_fetching', function(event) {
+
+            });
+            */
+            $scope.$on('finish_user_fetching', function(event) {
+                $scope.user_fetch_finished = true;
             });
 
             /*******************************************************************************************************
@@ -118,6 +143,8 @@
                 if (username == '') {
                     return;
                 }
+
+                $scope.$emit('start_user_fetching');
 
                 $scope.setOperationMessage('Preparing your request...');
                 usSpinnerService.spin('spinner-operation');
@@ -381,6 +408,44 @@
                 return infowindow;
             };
 
+            /**
+             * Show Heatmap
+             */
+            $scope.showHeatMap = function() {
+                $scope.heatmap_visible = true;
+
+                $scope.heatmap = null;
+                delete $scope.heatmap;
+
+                var heatmapData = [];
+
+                angular.forEach($scope.markers, function(marker, key) {
+                    var users_count = marker.users.friends.length + marker.users.followers.length;
+
+                    heatmapData = heatmapData.concat([{
+                        'location': marker.position,
+                        'weight': users_count
+                    }]);
+                });
+
+                $scope.heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: heatmapData,
+                    radius: 30
+                });
+                $scope.heatmap.setMap($scope.map);
+            };
+
+            /**
+             * Hide Heatmap
+             */
+            $scope.hideHeatMap = function() {
+                $scope.heatmap_visible = false;
+
+                if ($scope.heatmap) {
+                    $scope.heatmap.setMap(null);
+                }
+            };
+
             /*******************************************************************************************************
              * Utils
              ******************************************************************************************************/
@@ -455,6 +520,17 @@
 
                 //$scope.showSingleOperationMessage('Map centered on <a href="http://twitter.com/'+user.screen_name+'">@' + user.screen_name + '</a> at '+user.latitude + ',' + user.longitude);
                 $scope.showSingleOperationMessage('Centered on @' + user.screen_name + ' at '+user.latitude + ',' + user.longitude);
+            };
+
+            /**
+             * Toggle Heatmap
+             */
+            $scope.toggleHeatmap = function() {
+                if ($scope.heatmap_visible == false) {
+                    $scope.showHeatMap();
+                } else {
+                    $scope.hideHeatMap();
+                }
             };
 
             /*******************************************************************************************************

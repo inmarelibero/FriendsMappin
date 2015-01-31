@@ -5,7 +5,7 @@
 {% block body %}
 
     <div id="map-wrapper" style="position: absolute; top:0; right:0; bottom:0; left: 0; opacity: 0.3">
-        {{ google_map(map) }}
+        <div id="map_canvas" style="width: 100%; height: 100%"></div>
     </div>
 
     <div class="container">
@@ -44,4 +44,25 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        app.controller('FriendsMappinController', ['$scope', '$http', 'growl', '$document', 'ngProgress', 'usSpinnerService', function($scope, $http, growl, $document, ngProgress, usSpinnerService) {
+            $scope.initializeBackgroundMap = function() {
+                $scope.map = new google.maps.Map(document.getElementById('map_canvas'), {
+                    center: { lat: 48.856614, lng: 2.352222},
+                    zoom: 3
+                });
+            };
+
+            /*******************************************************************************************************
+             * On document ready
+             ******************************************************************************************************/
+            $document.ready(function(){
+                $scope.initializeBackgroundMap();
+            })
+        }]);
+
+    </script>
 {% endblock %}

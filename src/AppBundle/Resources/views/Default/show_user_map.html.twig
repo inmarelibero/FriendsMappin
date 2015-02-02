@@ -32,7 +32,7 @@
                     <b>Errors</b>
                     <p>
                         <a class="" href="javascript:void(0);" data-toggle="modal" data-target="#modal-users-without-location">
-                            {[{ users_not_localized | keylength }]} users without location
+                            {[{ users_fetched.friends_not_localized_count + users_fetched.followers_not_localized_count }]} users without location
                         </a>
                     </p>
 
@@ -81,7 +81,7 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        We weren't able to retrieve the location for {[{ users_not_localized | keylength }]} users.<br>
+                        We weren't able to retrieve the location for {[{ users_fetched.friends_not_localized_count + users_fetched.followers_not_localized_count }]} users.<br>
                         Click on a picture and send a tweet asking to update his location.
                     </p>
                     <ul id="list-users-without-location">
@@ -118,13 +118,17 @@
             $scope.totalUsers = 0;
 
             $scope.users_fetched = {
-                'friends': [],
-                'followers': [],
+                'friends_count': [],
+                'followers_count': [],
                 'friends_localized_count': 0,
-                'followers_localized_count': 0
+                'followers_localized_count': 0,
+                'friends_not_localized_count': 0,
+                'followers_not_localized_count': 0,
+                'not_localized': {
+                    'friends': [],
+                    'followers': []
+                }
             };
-
-            $scope.users_not_localized = {};
 
             $scope.user_fetch_finished = false;
             $scope.heatmap_visible = false;
@@ -158,10 +162,6 @@
                 if ($scope['finishFetchFriendsAndFollowers_friends'] == true && $scope['finishFetchFriendsAndFollowers_followers'] == true) {
                     // finish loading of all users (followers and following)
 
-
-                    //console.log($scope.markers);
-                    //console.log('xxxxxxxxxxxxxxx');
-                    //console.log($scope.users_fetched);
                     //console.log($scope.users_fetched);
 
                     ngProgress.complete();
@@ -256,9 +256,9 @@
                         ngProgress.set(progressPercentage);
 
                         // update operation message
-                        $scope.operation_in_progress = $scope.users_fetched.friends.length +'/' + $scope.user.friends_count + ' friends ' +
+                        $scope.operation_in_progress = $scope.users_fetched.friends_count +'/' + $scope.user.friends_count + ' friends ' +
                         //'<br>' +
-                        'and '+ $scope.users_fetched.followers.length +'/' + $scope.user.followers_count + ' followers so far, and counting...';
+                        'and '+ $scope.users_fetched.followers_count +'/' + $scope.user.followers_count + ' followers so far, and counting...';
 
                         // load next users
                         if (response.next_cursor_str == '0' || response.next_cursor_str == undefined) {
@@ -278,7 +278,7 @@
              * Return the total number of fetched users so far
              */
             $scope.getNumFetchedUsersSoFar = function() {
-                return $scope.users_fetched.friends.length + $scope.users_fetched.followers.length;
+                return $scope.users_fetched.friends_count + $scope.users_fetched.followers_count;
             };
 
             /**
@@ -286,37 +286,18 @@
              */
             $scope.handleFetchedUsers = function(users, type_of_users) {
                 /**
-                 * put users in $scope.users_fetched
+                 * increment counter
                  */
                 angular.forEach(users, function(user, key) {
-                    if ($scope.users_fetched[type_of_users] == undefined) {
-                        $scope.users_fetched[type_of_users] = [];
+
+                    if (type_of_users == 'friends') {
+                        $scope.users_fetched.friends_count++;
+                    } else if (type_of_users == 'followers') {
+                        $scope.users_fetched.followers_count++;
                     }
-                    // add the single user to the list
-                    $scope.users_fetched[type_of_users] = $scope.users_fetched[type_of_users].concat([user]);
 
                     $scope.drawUserOnMap(user, type_of_users);
                 });
-            };
-
-            /**
-             * @todo refactor this, quite heavy
-             */
-            $scope.getUserFetchedWithLocation = function() {
-                var output = {};
-
-                angular.forEach($scope.users_fetched, function(users, type_of_users) {
-
-                    output[type_of_users] = [];
-
-                    angular.forEach(users, function(user, key) {
-                        if (user.latitude != null && user.longitude != null) {
-                            output[type_of_users] = output[type_of_users].concat([user]);
-                        }
-                    });
-                });
-
-                return output;
             };
 
             /*******************************************************************************************************
@@ -327,6 +308,14 @@
              */
             $scope.drawUserOnMap = function(user, type_of_user) {
                 if (user.latitude == null || user.longitude == null) {
+                    $scope.users_fetched.not_localized[type_of_user] = $scope.addElementsToList([user], $scope.users_fetched.not_localized[type_of_user]);
+
+                    if (type_of_user == 'friends') {
+                        $scope.users_fetched.friends_not_localized_count++;
+                    } else if (type_of_user == 'followers') {
+                        $scope.users_fetched.followers_not_localized_count++;
+                    }
+
                     return;
                 }
 
@@ -579,12 +568,36 @@
                 $scope.closeOperationMessage();
             };
 
+            /**
+             * Get users with location
+             *
+             * @TODO refactor
+             */
+            $scope.getUserFetchedWithLocation = function() {
+                var output = {
+                    'friends': [],
+                    'followers': []
+                };
+
+                angular.forEach($scope.markers, function(marker, marker_key) {
+                    angular.forEach(marker.users, function(users, type_of_users) {
+                        angular.forEach(users, function(user, key) {
+                            output[type_of_users] = output[type_of_users].concat([user]);
+                        });
+                    });
+                });
+
+                return output;
+            };
+
+            /**
+             * Get users without location
+             */
             $scope.getUsersNotLocalized = function() {
                 var output = {};
 
-                var keys = ['friends', 'followers'];
-                angular.forEach(keys, function(key, index) {
-                    angular.forEach($scope.users_fetched[key], function(user, k) {
+                angular.forEach($scope.users_fetched.not_localized, function(users, type_of_users) {
+                    angular.forEach(users, function(user, key) {
                         if (output[user.screen_name] == undefined) {
                             output[user.screen_name] = user;
                         }
@@ -592,7 +605,7 @@
                 });
 
                 return output;
-            }
+            };
 
             /*******************************************************************************************************
              * Clicks
@@ -604,8 +617,7 @@
                     return;
                 }
 
-                var position = new google.maps.LatLng(user.latitude, user.longitude);
-                $scope.setCenterOnMap($scope.map, position);
+                $scope.setCenterOnMap($scope.map, new google.maps.LatLng(user.latitude, user.longitude));
 
                 google.maps.event.trigger(marker, 'click');
 

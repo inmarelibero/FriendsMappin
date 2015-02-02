@@ -121,6 +121,36 @@ class DefaultController extends Controller
             } else {
                 $response['users'][$k]['invalid_location'] = false;
             }
+
+            $keysToUnset = array(
+                'contributors_enabled',
+                'created_at',
+                'default_profile',
+                'default_profile_image',
+                'follow_request_sent',
+                'following',
+                'geo_enabled',
+                'is_translation_enabled',
+                'is_translator',
+                'muting',
+                'notifications',
+                'profile_background_color',
+                'profile_background_tile',
+                'profile_link_color',
+                'profile_location',
+                'profile_sidebar_border_color',
+                'profile_sidebar_fill_color',
+                'profile_text_color',
+                'profile_use_background_image',
+                'protected',
+                'statuses_count',
+                'time_zone',
+                'utc_offset',
+                'verified'
+            );
+            foreach ($keysToUnset as $keyToUnset) {
+                unset($response['users'][$k][$keyToUnset]);
+            }
         }
 
         // set type of users

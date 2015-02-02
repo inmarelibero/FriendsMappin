@@ -75,11 +75,15 @@
                         </form>
 
                         <p class="navbar-text">
+                            <img src="{[{ user.profile_image_url }]}" style="height: 32px;" />
+
+                            &nbsp;&nbsp;
+
                             {% if (app.request.get('username')) %}
-                                <span>{[{ user.friends_count }]} Friends</span> ({[{ users_fetched.friends.length }]} fetched, {[{ getUserFetchedWithLocation().friends.length }]} localized)
-                                &nbsp;&nbsp;&nbsp;
+                                <span>{[{ user.friends_count }]} Friends</span> ({[{ getUserFetchedWithLocation().friends.length }]} localized)
+                                &nbsp;&nbsp;
                                 <br class="visible-xs">
-                                <span>{[{ user.followers_count }]} Followers</span> ({[{ users_fetched.followers.length }]} fetched, {[{ getUserFetchedWithLocation().followers.length }]} localized)
+                                <span>{[{ user.followers_count }]} Followers</span> ({[{ getUserFetchedWithLocation().followers.length }]} localized)
                             {% else %}
                                 <= enter a Twitter username to find where his followers and followings are
                             {% endif %}

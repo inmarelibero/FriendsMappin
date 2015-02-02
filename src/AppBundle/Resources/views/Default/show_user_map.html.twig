@@ -48,7 +48,11 @@
                 zoom: 3
             });
 
-            $scope.user = null;
+            // fake user at initialization
+            $scope.user = {
+                'friends_count': 0,
+                'followers_count': 0
+            };
             $scope.totalUsers = 0;
 
             $scope.users_fetched = {
@@ -58,9 +62,6 @@
 
             $scope.user_fetch_finished = false;
             $scope.heatmap_visible = false;
-
-            $scope.finishFetchUsersForUsername_friends == false;
-            $scope.finishFetchUsersForUsername_followers == false;
 
             $scope.markers = {};
 

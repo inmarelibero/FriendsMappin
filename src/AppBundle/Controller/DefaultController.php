@@ -105,13 +105,22 @@ class DefaultController extends Controller
         $response = json_decode($response, true);
 
         /**
-         * populate every user with "latitude" and "longitude" fields
+         * to every user, add fields:
+         *      - latitude:         null|float
+         *      - longitude:        null|float
+         *      - invalid_location: boolean
          */
         foreach ($response['users'] as $k => $user) {
             list($latitude, $longitude) = $this->get('geocoder_result.service')->getLatLongForLocation($user['location']);
 
             $response['users'][$k]['latitude'] = $latitude;
             $response['users'][$k]['longitude'] = $longitude;
+
+            if (empty($latitude) || empty($longitude)) {
+                $response['users'][$k]['invalid_location'] = true;
+            } else {
+                $response['users'][$k]['invalid_location'] = false;
+            }
         }
 
         // set type of users

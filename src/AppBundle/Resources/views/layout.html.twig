@@ -75,11 +75,15 @@
                         </form>
 
                         <p class="navbar-text">
+                            <img src="{[{ user.profile_image_url }]}" style="height: 32px;" />
+
+                            &nbsp;&nbsp;
+
                             {% if (app.request.get('username')) %}
-                                <span>{[{ user.friends_count }]} Friends</span> ({[{ users_fetched.friends.length }]} fetched, {[{ getUserFetchedWithLocation().friends.length }]} localized)
-                                &nbsp;&nbsp;&nbsp;
+                                <span>{[{ user.friends_count }]} Friends</span> ({[{ users_fetched.friends_localized_count }]} localized)
+                                &nbsp;&nbsp;
                                 <br class="visible-xs">
-                                <span>{[{ user.followers_count }]} Followers</span> ({[{ users_fetched.followers.length }]} fetched, {[{ getUserFetchedWithLocation().followers.length }]} localized)
+                                <span>{[{ user.followers_count }]} Followers</span> ({[{ users_fetched.followers_localized_count }]} localized)
                             {% else %}
                                 <= enter a Twitter username to find where his followers and followings are
                             {% endif %}
@@ -144,9 +148,14 @@
                     growlProvider.globalDisableCountDown(false);
                 }]);
 
-            app.controller('FriendsMappinController', ['$scope', '$http', 'growl', '$document', 'ngProgress', 'usSpinnerService', function($scope, $http, growl, $document, ngProgress, usSpinnerService) {
-
-            }]);
+            app.filter('keylength', function(){
+                return function(input){
+                    if(!angular.isObject(input)){
+                        throw Error("Usage of non-objects with keylength filter!!")
+                    }
+                    return Object.keys(input).length;
+                }
+            });
         </script>
 
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>

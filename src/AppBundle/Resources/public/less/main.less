@@ -33,6 +33,8 @@ ul {
 
   ul.users-loaded {
     overflow-x: hidden;
+    height: 200px;
+    overflow: auto;
 
     li {
       float: left;
@@ -84,6 +86,12 @@ ul {
     @media (max-width: 768px) {
       //float: left;
     }
+  }
+
+  .navbar-text {
+    margin-top:     8px;
+    margin-bottom:  8px;
+    line-height:    22px;
   }
 }
 
@@ -168,4 +176,32 @@ ul {
     }
   }
   */
+}
+
+accordion {
+  .panel-heading {
+    padding: 0px;
+
+    .panel-title {
+      a {
+        display: block;
+        padding: 10px 5px;
+      }
+    }
+  }
+
+  .panel-body {
+    padding: 5px;
+  }
+}
+
+ul#list-users-without-location {
+  overflow: hidden;
+  max-height: 300px;
+  overflow: auto;
+
+  li {
+    float: left;
+    margin: 2px;
+  }
 }

@@ -5,16 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        {% block metatags %}
+            {% render controller('CopiaincollaMetaTagsBundle:MetaTags:render') %}
+        {% endblock %}
 
-        <title>{% block title %}FriendsMappin - Find where your followers are{% endblock %}</title>
-        <meta name="author" content="Emanuele Gaspari - @inmarelibero" />
-        <meta name="description" content="Show on a map where your Twitter followers are" />
-        <meta name="keywords" content="twitter friends mapping friend map geo geolocalize follower followers api">
-
-        <meta property="og:title" content="FriendsMappin - Show on a map where your Twitter followers are" />
-        <meta property="og:image" content="{{ asset('images/social-share.png', null, true) }}" />
-        <meta property="og:url" content="{{ app.request.uri }}" />
-        <meta property="og:description" content="Quite buggy, not completely working, but cool proof of concept. By inmarelibero." />
 
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 

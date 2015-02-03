@@ -1,5 +1,9 @@
 {% extends 'AppBundle::layout.html.twig' %}
 
+{% block metatags %}
+    {% render controller('CopiaincollaMetaTagsBundle:MetaTags:render', { 'inlineMetatags': {'title': 'FriendsMappin: map for @'~username, 'description': 'This is the map displaying the followers and friends of @'~username} }) %}
+{% endblock %}
+
 {% block body %}
 
     <div id="wrapper-fullscreen">

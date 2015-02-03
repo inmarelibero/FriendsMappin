@@ -54,9 +54,11 @@ class DefaultController extends Controller
      * @Route("/user/{username}", name="show_user_map")
      * @Template("AppBundle:Default:show_user_map.html.twig")
      */
-    public function showUserMapAction(Request $request)
+    public function showUserMapAction(Request $request, $username)
     {
-        return array();
+        return array(
+            'username' => $username
+        );
     }
 
     /**

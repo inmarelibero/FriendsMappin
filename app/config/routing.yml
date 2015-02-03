@@ -2,6 +2,15 @@ app:
     resource: @AppBundle/Controller/
     type:     annotation
 
+# CopiaincollaMetaTagsBundle
+ci_metatags_bundle_admin:
+    resource: "@CopiaincollaMetaTagsBundle/Resources/config/routing.yml"
+    prefix:   /admin/
+
+# app/config/routing.yml
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
 # FOSJsRoutingBundle routes
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"

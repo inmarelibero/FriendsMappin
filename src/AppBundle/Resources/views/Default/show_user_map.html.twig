@@ -75,7 +75,7 @@
 
     </div>
 
-    <!-- Modal -->
+    <!-- Users not localized modal -->
     <div class="modal fade" id="modal-users-without-location" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -103,6 +103,39 @@
         </div>
     </div>
 
+    <!-- Fatal error modal -->
+    <div class="modal fade" id="modal-fatal-error" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="color: red;">Fatal error</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Something <b>veeeery bad</b> happened.
+                        <br>
+                        Probably we made too many requests to Twitter APIs.
+                    </p>
+                    <br>
+                    <h4>Yeah, well, gimme more.</h4>
+                    <p>
+                        We can do something like <b>1500 requests</b> to the Twitter APIs <b>every 15 minutes</b>; for every request we can retrieve <b>200 friends or followers</b>.<br>
+                        You have a total of {[{ user.friends_count + user.followers_count }]} friends and followers, this means that FriendsMappin should do more or less <b>{[{ Math.ceil((user.friends_count + user.followers_count)/200) }]} requests</b>.<br>
+                        Maybe are too many?
+                        <br><br>
+                        <b>But all requests are cached</b>, it's to say that the second time you load this map, we don't call Twitter APIs if we already have  a request in database.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ path('homepage') }}" class="btn btn-default pull-right">Try another user</a>
+                    <p class="pull-left" style="display: inline-block; margin: 0; margin-top: 7px;">
+                        <b>So</b>, please try again in some minutes, this may work ;)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -113,6 +146,8 @@
                 center: { lat: 48.856614, lng: 2.352222},
                 zoom: 3
             });
+
+            $scope.Math = Math;
 
             // fake user at initialization
             $scope.user = {
@@ -274,7 +309,8 @@
                         }
                     })
                     .error(function (response) {
-                        growl.error("Fatal, maybe too many requests to Twitter. <br>Please try again later.");
+                        //growl.error("Fatal, maybe too many requests to Twitter. <br>Please try again later.");
+                        $('#modal-fatal-error').modal('show');
                     });
             };
 

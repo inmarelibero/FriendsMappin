@@ -56,6 +56,11 @@ class DefaultController extends Controller
      */
     public function showUserMapAction(Request $request, $username)
     {
+        // redirects if $username begins with "@"
+        if (substr($username, 0, 1) == '@') {
+            return $this->redirectToRoute('show_user_map', array('username' => substr($username, 1)));
+        }
+
         return array(
             'username' => $username
         );

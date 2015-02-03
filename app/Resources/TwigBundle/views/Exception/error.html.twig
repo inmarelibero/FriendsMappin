@@ -1,0 +1,53 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block header '' %}
+
+{% block body %}
+
+    <div id="map-wrapper" style="position: absolute; top:0; right:0; bottom:0; left: 0; opacity: 0.3">
+        <div id="map_canvas" style="width: 100%; height: 100%"></div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="well" style="margin-top: 20%">
+                    <h1 style="color: red;">Oops! An Error Occurred.</h1>
+                    <h2>The server returned a "{{ status_code }} {{ status_text }}".</h2>
+
+                    <p>
+                        Something is broken. Please <a href="https://twitter.com/intent/tweet?text=@inmarelibero something was borken on FriendsMappin while accessing {{ app.request.uri|url_encode }}">let us know</a> what you were doing when this error occurred.
+                        We will fix it as soon as possible. Sorry for any inconvenience caused.
+                    </p>
+
+                    <br><br>
+
+                    <p>
+                        <a href="{{ path('homepage') }}"><span class="glyphicon glyphicon-chevron-left"></span> Back to homepage</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block javascripts %}
+        <script>
+            app.controller('FriendsMappinController', ['$scope', '$http', 'growl', '$document', 'ngProgress', 'usSpinnerService', function($scope, $http, growl, $document, ngProgress, usSpinnerService) {
+                $scope.initializeBackgroundMap = function() {
+                    $scope.map = new google.maps.Map(document.getElementById('map_canvas'), {
+                        center: { lat: 48.856614, lng: 2.352222},
+                        zoom: 3
+                    });
+                };
+
+                /*******************************************************************************************************
+                 * On document ready
+                 ******************************************************************************************************/
+                $document.ready(function(){
+                    $scope.initializeBackgroundMap();
+                })
+            }]);
+
+        </script>
+    {% endblock %}

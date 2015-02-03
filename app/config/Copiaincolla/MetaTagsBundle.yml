@@ -1,0 +1,5 @@
+copiaincolla_meta_tags:
+    urls_loader:
+        exposed_routes:
+            bundles:
+                - AppBundle

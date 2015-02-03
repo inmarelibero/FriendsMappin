@@ -22,6 +22,8 @@ class AppKernel extends Kernel
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Minifier\MinifierBundle(),
+            new Copiaincolla\MetaTagsBundle\CopiaincollaMetaTagsBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
 
             new AppBundle\AppBundle(),
         );

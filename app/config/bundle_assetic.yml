@@ -44,8 +44,19 @@ assetic:
             filters: [cssrewrite]
         frontend_footer_javascripts:
             inputs:
+                - @AppBundle/Resources/public/js/main.js
+
+                - @AppBundle/Resources/public/js/angularjs/app.js
+                - @AppBundle/Resources/public/js/angularjs/filters.js
+                - @AppBundle/Resources/public/js/angularjs/services/*.js
+                - @AppBundle/Resources/public/js/angularjs/controllers.js
+
+                - assets/underscorejs/underscore-min.js
+
                 - assets/jquery-1.11.2/jquery-1.11.2.min.js
                 - assets/jquery-1.11.2/jquery-migrate-1.2.1.min.js
+                - assets/lazyload/jquery.lazyload.min.js
+
                 - assets/bootstrap-3.3.2/bootstrap.min.js
                 - assets/js-marker-clusterer/markerclusterer_compiled.js
                 - assets/RainbowVis-JS/rainbowvis.js

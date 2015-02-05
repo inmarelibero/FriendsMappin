@@ -25,17 +25,34 @@
 
                     <br><br>
 
-                    <form class="form-horizontal" role="search" action="{{ path('user_form_submit') }}" method="POST">
+                    <form class="form-horizontal" role="search" action="{{ path('user_form_submit') }}" method="POST" novalidate="">
 
                         <div class="input-group">
-                            <input id="username" type="text" class="form-control" name="username" placeholder="Enter a Twitter username" />
+                            {{ form_widget(displayUserMapForm.username, {'attr': {'class': 'form-control', 'placeholder': 'Enter a Twitter username'}}) }}
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-primary">
-                                    <span class="glyphicon glyphicon-search"
+                                    <span class="glyphicon glyphicon-search"></span>
                                 </button>
                             </span>
+
+                        </div>
+                        {% if form_errors(displayUserMapForm.username) %}
+                            {{ form_errors(displayUserMapForm.username) }}
+                        {% endif %}
+
+                        <br>
+
+                        <div>
+                            <label class="checkbox-inline">
+                                {{ form_widget(displayUserMapForm.show_friends, {'attr': {'checked': 'checked'}}) }} Show Friends (users you follow)
+                            </label>
+
+                            <label class="checkbox-inline">
+                                {{ form_widget(displayUserMapForm.show_followers, {'attr': {'checked': 'checked'}}) }}Show Followers
+                            </label>
                         </div>
 
+                        {{ form_rest(displayUserMapForm) }}
                     </form>
                     <br>
                 </div>
@@ -48,21 +65,15 @@
 
 {% block javascripts %}
     <script>
-        app.controller('FriendsMappinController', ['$scope', '$http', 'growl', '$document', 'ngProgress', 'usSpinnerService', function($scope, $http, growl, $document, ngProgress, usSpinnerService) {
-            $scope.initializeBackgroundMap = function() {
-                $scope.map = new google.maps.Map(document.getElementById('map_canvas'), {
-                    center: { lat: 48.856614, lng: 2.352222},
-                    zoom: 3
-                });
-            };
+        function initializeBackgroundMap() {
+            new google.maps.Map(document.getElementById('map_canvas'), {
+                center: {lat: 48.856614, lng: 2.352222},
+                zoom: 3
+            });
+        }
 
-            /*******************************************************************************************************
-             * On document ready
-             ******************************************************************************************************/
-            $document.ready(function(){
-                $scope.initializeBackgroundMap();
-            })
-        }]);
-
+        $(function(){
+            initializeBackgroundMap();
+        })
     </script>
 {% endblock %}

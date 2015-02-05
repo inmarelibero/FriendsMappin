@@ -16,7 +16,6 @@ ul {
   z-index: 1001;
 
   margin: 0px;
-  padding: 5px;
 
   top: 0;
   right: 0;
@@ -71,6 +70,7 @@ ul {
       float: left;
       margin: 2px;
       width: 30px;
+      background: #fafafa;
     }
   }
 }
@@ -126,7 +126,11 @@ ul {
     position:relative;
     display: inline-block;
     padding: 3px 20px;
-    padding-left: 28px;
+
+    &.message-type-error {
+      background: red;
+      color: #FFF;
+    }
   }
 
   iframe {
@@ -179,19 +183,26 @@ ul {
 }
 
 accordion {
-  .panel-heading {
-    padding: 0px;
+  .panel-group {
 
-    .panel-title {
-      a {
-        display: block;
-        padding: 10px 5px;
+    .panel {
+      border-radius: 0px;
+
+      .panel-heading {
+        padding: 0px;
+
+        .panel-title {
+          a {
+            display: block;
+            padding: 10px 5px;
+          }
+        }
+      }
+
+      .panel-body {
+        padding: 5px;
       }
     }
-  }
-
-  .panel-body {
-    padding: 5px;
   }
 }
 

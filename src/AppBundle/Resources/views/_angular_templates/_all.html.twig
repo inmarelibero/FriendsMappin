@@ -1,0 +1,16 @@
+<script type="text/ng-template" id="head_bar.html">
+    <div>
+        <img src="{[{ UserMapService.user.profile_image_url }]}" style="height: 32px;" />
+
+        &nbsp;&nbsp;
+
+        {% if (app.request.get('username')) %}
+            <span>{[{ UserMapService.user.friends_count }]} Friends</span> ({[{ UserMapService.counters.localized_friends }]} localized)
+            &nbsp;&nbsp;
+            <br class="visible-xs">
+            <span>{[{ UserMapService.user.followers_count }]} Followers</span> ({[{ UserMapService.counters.localized_followers }]} localized)
+        {% else %}
+            <= enter a Twitter username to find where his followers and followings are
+        {% endif %}
+    </div>
+</script>

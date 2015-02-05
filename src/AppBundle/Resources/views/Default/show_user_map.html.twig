@@ -4,764 +4,199 @@
     {% render controller('CopiaincollaMetaTagsBundle:MetaTags:render', { 'inlineMetatags': {'title': 'FriendsMappin: map for @'~username, 'description': 'This is the map displaying the followers and friends of @'~username} }) %}
 {% endblock %}
 
-{% block body %}
+{% block header_next %}
 
-    <div id="wrapper-fullscreen">
-        <div id="map-wrapper">
-            <div id="map_canvas" style="width: 100%; height: 100%"></div>
+    <div id="alert-operation" class="ng-hide" ng-show="operation_in_progress != ''">
+        <p class="message {[{ 'message-type-' + operation_message_type }]}">
+            <span us-spinner="{radius:4, width:2, length: 3, color: '#FFF'}" spinner-key="spinner-operation" style="display: inline-block; margin-right: 13px; top: -4px; position: relative;" ng-show="show_spinner"></span>
 
-            <div id="fake-map" style="dispaly: none; width: 0px; height: 0px"></div>
-        </div>
-    </div>
+            <span class="msg">
+                {[{ operation_in_progress }]}
+            </span>
+        </p>
+        {#
 
-    <div id="right-panel">
-
-        <accordion close-others="true">
-            <accordion-group heading='{[{ user.screen_name }]}' is-open="true">
-                <p>
-                    This is the map of the friends and followers of <a href="http://twitter.com/{[{ user.screen_name }]}" target="_blank">{[{ user.screen_name }]}</a>
-                </p>
-
-                <b>Friends statistics</b>
-                <p>
-                    {[{ user.friends_count }]} total
-                    <br>
-                    {[{ users_fetched.friends_localized_count }]} localized
-                </p>
-                <b>Followers statistics</b>
-                <p>
-                    {[{ user.followers_count }]} total
-                    <br>
-                    {[{ users_fetched.followers_localized_count }]} localized
-                </p>
-                <div id="advanced-operations" ng-show="user_fetch_finished == true" class="ng-hide">
-                    <b>Errors</b>
-                    <p>
-                        <a class="" href="javascript:void(0);" data-toggle="modal" data-target="#modal-users-without-location">
-                            {[{ users_fetched.friends_not_localized_count + users_fetched.followers_not_localized_count }]} users without location
-                        </a>
-                    </p>
-
-                    <b>More</b>
-                    <p>
-                        <a
-                                href="javascript:void(0)"
-                                class="ng-hide"
-                                ng-click="toggleHeatmap()"
-                                ng-show="user_fetch_finished == true"
-                                >
-                            {[{ (heatmap_visible == true) ? 'Hide Heatmap':'Show Heatmap' }]}
-                        </a><br>
-
-                        <a
-                            href="javascript:void(0)"
-                            class="ng-hide"
-                            ng-click="toggleMarkers()"
-                            ng-show="user_fetch_finished == true"
-                        >
-                            {[{ (markers_visible == true) ? 'Hide Markers':'Show Markers' }]}
-                        </a>
-                    </p>
-                </div>
-            </accordion-group>
-            <accordion-group heading="Friends ({[{ users_fetched.friends_localized_count }]})">
-                <ul class="users-loaded">
-                    <li ng-repeat="user in getUserFetchedWithLocation().friends">
-                        <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)">
-                            <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
-                        </a>
-                    </li>
-                </ul>
-            </accordion-group>
-            <accordion-group heading="Followers ({[{ users_fetched.followers_localized_count }]})">
-                <ul class="users-loaded">
-                    <li ng-repeat="user in getUserFetchedWithLocation().followers">
-                        <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)">
-                            <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
-                        </a>
-                    </li>
-                </ul>
-            </accordion-group>
-        </accordion>
-
-    </div>
-
-    <!-- Users not localized modal -->
-    <div class="modal fade" id="modal-users-without-location" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Users without location</h4>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        We weren't able to retrieve the location for {[{ users_fetched.friends_not_localized_count + users_fetched.followers_not_localized_count }]} users.<br>
-                        Click on a picture and send a tweet asking to update his location.
-                    </p>
-                    <ul id="list-users-without-location">
-                        <li ng-repeat="user in users_not_localized">
-                            <a href="https://twitter.com/intent/tweet?text={{ '@'|url_encode }}{[{ user.screen_name }]} would you set the location in your Twitter profile? I'd like to view you on {{ app.request.uri|url_encode }}" tooltip="{[{ user.screen_name }]}" ng-click="">
-                                <img src="{[{ user.profile_image_url }]}" />
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Fatal error modal -->
-    <div class="modal fade" id="modal-fatal-error" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" style="color: red;">Fatal error</h4>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        Something <b>veeeery bad</b> happened.
-                        <br>
-                        Probably we made too many requests to Twitter APIs.
-                    </p>
-                    <br>
-                    <h4>Yeah, well, gimme more.</h4>
-                    <p>
-                        We can do something like <b>150 requests</b> to the Twitter APIs <b>every 15 minutes</b>; for every request we can retrieve <b>200 friends or followers</b>.<br>
-                        You have a total of {[{ user.friends_count + user.followers_count }]} friends and followers, this means that FriendsMappin should do more or less <b>{[{ Math.ceil((user.friends_count + user.followers_count)/200) }]} requests</b>.<br>
-                        Maybe are too many?
-                        <br><br>
-                        <b>But all requests are cached</b>, it's to say that the second time you load this map, we don't call Twitter APIs if we already have  a request in database.
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <a href="{{ path('homepage') }}" class="btn btn-default pull-right">Try another user</a>
-                    <p class="pull-left" style="display: inline-block; margin: 0; margin-top: 7px;">
-                        <b>So</b>, please try again in some minutes, this may work ;)
-                    </p>
-                </div>
-            </div>
-        </div>
+        <br><br>
+        <p style="font-size: 12px;">
+            While waiting, consider spreading the voice via
+            {% if (app.request.get('username')) %}
+                <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+            {% else %}
+                <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Find where your followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+            {% endif %}
+        </p>
+        #}
     </div>
 
 {% endblock %}
 
+
+{% block header_text %}
+    <head-bar></head-bar>
+{% endblock %}
+
+
+{% block body %}
+
+    <div ng-controller="MapController as mapCtrl" ng-init="username='{{ username }}'">
+
+        <div id="wrapper-fullscreen">
+            <div id="map-wrapper">
+                <div id="map_canvas" style="width: 100%; height: 100%"></div>
+
+                <div id="fake-map" style="dispaly: none; width: 0px; height: 0px"></div>
+            </div>
+        </div>
+
+        <div id="right-panel">
+
+            <accordion close-others="true">
+                <accordion-group heading='{[{ UserMapService.user.screen_name }]}' is-open="true">
+                    <p>
+                        This is the map of the friends and followers of <a href="http://twitter.com/{[{ UserMapService.user.screen_name }]}" target="_blank">{[{ UserMapService.user.screen_name }]}</a>
+                    </p>
+
+                    <b><span class="glyphicon glyphicon-stats"></span> Friends statistics</b>
+                    <p>
+                        {[{ UserMapService.user.friends_count }]} total
+                        <br>
+                        {[{ UserMapService.counters.localized_friends }]} localized
+                    </p>
+                    <b><span class="glyphicon glyphicon-stats"></span> Followers statistics</b>
+                    <p>
+                        {[{ UserMapService.user.followers_count }]} total
+                        <br>
+                        {[{ UserMapService.counters.localized_followers }]} localized
+                    </p>
+                    <div id="advanced-operations" ng-show="UserMapService.state_flags.fetch_all_users_finished" class="ng-hide">
+                        <b><span class="glyphicon glyphicon-remove-sign"></span> Errors</b>
+                        <p>
+                            <a class="" href="javascript:void(0);" data-toggle="modal" data-target="#modal-users-without-location">
+                                {[{ UserMapService.counters.not_localized_friends + UserMapService.counters.not_localized_followers }]} Users without location
+                            </a>
+                        </p>
+
+                        <b><span class="glyphicon glyphicon-plus-sign"></span> More</b>
+                        <p>
+                            <a
+                                href="javascript:void(0)"
+                                ng-click=" UserMapService.toggleHeatmap()"
+                            >
+                                Toggle Heatmap
+                            </a>
+                            <br>
+                            <a
+                                href="javascript:void(0)"
+                                ng-click="UserMapService.toggleMarkers()"
+                            >
+                                Toggle Markers
+                            </a>
+                        </p>
+                    </div>
+                </accordion-group>
+                <accordion-group heading="Friends ({[{ UserMapService.counters.localized_friends }]})">
+                    <ul class="users-loaded">
+                        <li ng-repeat="user in UserMapService.fetched_users_organized.friends.localized">
+                            <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)">
+                                <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                            </a>
+                        </li>
+                    </ul>
+                </accordion-group>
+                <accordion-group heading="Followers ({[{ UserMapService.counters.localized_followers }]})">
+                    <ul class="users-loaded">
+                        <li ng-repeat="user in UserMapService.fetched_users_organized.followers.localized">
+                            <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)">
+                                <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                            </a>
+                        </li>
+                    </ul>
+                </accordion-group>
+            </accordion>
+
+        </div>
+
+        <!-- Users not localized modal -->
+        <div class="modal fade" id="modal-users-without-location" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Users without location</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            We weren't able to retrieve the location for {[{ UserMapService.counters.not_localized_friends + UserMapService.counters.not_localized_followers }]} users.<br>
+                            Click on a picture and send a tweet asking to update his location.
+                        </p>
+                        <ul id="list-users-without-location">
+                            <li ng-repeat="user in UserMapService.fetched_users_organized.friends.not_localized">
+                                <a href="https://twitter.com/intent/tweet?text={{ '@'|url_encode }}{[{ user.screen_name }]} would you set the location in your Twitter profile? I'd like to view you on {{ app.request.uri|url_encode }}" tooltip="{[{ user.screen_name }]}" ng-click="">
+                                    <img data-original="{[{ user.profile_image_url }]}" />
+                                </a>
+                            </li>
+                            <li ng-repeat="user in UserMapService.fetched_users_organized.followers.not_localized">
+                                <a href="https://twitter.com/intent/tweet?text={{ '@'|url_encode }}{[{ user.screen_name }]} would you set the location in your Twitter profile? I'd like to view you on {{ app.request.uri|url_encode }}" tooltip="{[{ user.screen_name }]}" ng-click="">
+                                    <img data-original="{[{ user.profile_image_url }]}" />
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fatal error modal -->
+        <div class="modal fade" id="modal-fatal-error" tabindex="-1" role="dialog" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" style="color: red;">
+                            <span class="glyphicon glyphicon-ban-circle"></span> Fatal error
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="error default-error">
+                            <p>
+                                Something <b>veeeery bad</b> happened.
+                                <br>
+                                Probably we made too many requests to Twitter APIs.
+                            </p>
+                            <br>
+                            <h4>Yeah, well, gimme more.</h4>
+                            <p>
+                                We can do more or less <b>150 requests</b> to the Twitter APIs <b>every 15 minutes</b>; for every request we can retrieve <b>200 friends or followers</b>.<br>
+                                Now, <b>{[{ UserMapService.user.screen_name }]}</b> has a total of {[{ UserMapService.getTotalUsers() }]} friends and followers, this means that FriendsMappin should do more or less <b>{[{ Math.ceil(UserMapService.getTotalUsers()/200) }]} requests</b>.<br>
+                                Maybe are too many?
+                                <br><br>
+                                <b>But all requests are cached</b>, it's to say that the second time you load this map, we don't call Twitter APIs if we already have  a request in database.
+                            </p>
+                            <p>
+                                <b>So</b>, please try again in some minutes, this may work ;) Or <a href="{{ path('homepage') }}">try another user</a>.
+                            </p>
+                            <p class="text-right">
+                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+                            </p>
+                        </div>
+                        <div class="error custom-error"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
 {% block javascripts %}
-
     <script>
-        app.controller('FriendsMappinController', ['$scope', '$http', 'growl', '$document', 'ngProgress', 'usSpinnerService', function($scope, $http, growl, $document, ngProgress, usSpinnerService) {
-            $scope.map = new google.maps.Map(document.getElementById('map_canvas'), {
-                center: { lat: 48.856614, lng: 2.352222},
-                zoom: 3
-            });
-
-            $scope.Math = Math;
-
-            // fake user at initialization
-            $scope.user = {
-                'friends_count': 0,
-                'followers_count': 0
-            };
-            $scope.totalUsers = 0;
-
-            $scope.users_fetched = {
-                'friends_count': [],
-                'followers_count': [],
-                'friends_localized_count': 0,
-                'followers_localized_count': 0,
-                'friends_not_localized_count': 0,
-                'followers_not_localized_count': 0,
-                'not_localized': {
-                    'friends': [],
-                    'followers': []
-                }
-            };
-
-            $scope.user_fetch_finished = false;
-            $scope.heatmap_visible = false;
-            $scope.markers_visible = false;
-
-            $scope.markers = {};
-
-            $scope.init = function() {
-                $scope.rainbow = $scope.initializeRainbow();
-
-                $scope.markerCluster = new MarkerClusterer($scope.map, [], {
-                    gridSize: 40,
-                    minimumClusterSize: 5
-                    /*
-                    calculator: function (markers, numStyles) {
-                        return {
-                            text: markers.length,
-                            index: numStyles
-                        };
-                    }
-                    */
-                });
-            };
-
-            /*******************************************************************************************************
-             * Listeners
-             ******************************************************************************************************/
-            $scope.$on('finishFetchFriendsAndFollowers', function(event, type_of_users) {
-
-                $scope['finishFetchFriendsAndFollowers_' + type_of_users] = true;
-
-                if ($scope['finishFetchFriendsAndFollowers_friends'] == true && $scope['finishFetchFriendsAndFollowers_followers'] == true) {
-                    // finish loading of all users (followers and following)
-
-                    //console.log($scope.users_fetched);
-
-                    ngProgress.complete();
-                    $scope.setOperationMessage('Done!');
-                    $scope.closeOperationMessage();
-
-                    $scope.$emit('finish_user_fetching');
-                }
-            });
-
-            /*
-            $scope.$on('start_user_fetching', function(event) {
-
-            });
-            */
-            $scope.$on('finish_user_fetching', function(event) {
-                $scope.user_fetch_finished = true;
-                $scope.markers_visible = true;
-
-                $scope.users_not_localized = $scope.getUsersNotLocalized();
-            });
-
-            /*******************************************************************************************************
-             * User Profile
-             ******************************************************************************************************/
-            $scope.getUserProfile = function(username) {
-                $http.get(Routing.generate('get_profile_show', {
-                    'username': username
-                }))
-                    .success(function (response) {
-                        $scope.user = response;
-
-                        // set total users number
-                        $scope.totalUsers = $scope.user.followers_count + $scope.user.friends_count;
-
-                        $scope.startUsersFetching($scope.username);
-                    })
-                    .error(function (response) {
-                        growl.error("Fatal: unable to retrieve profile" + username + ". <br>Please try again later.");
-                    });
-            };
-
-            /*******************************************************************************************************
-             * Fetch user followers and followings
-             ******************************************************************************************************/
-            /**
-             * Fetches users and throws an event when finished
-             */
-            $scope.startUsersFetching = function(username) {
-                if (username == '') {
-                    return;
-                }
-
-                $scope.$emit('start_user_fetching');
-
-                $scope.setOperationMessage('Preparing your request...');
-                usSpinnerService.spin('spinner-operation');
-                ngProgress.set(0);
-
-                // fetch friends and followers
-                $scope.fetchFriendsAndFollowers(username, null, 'friends');
-                $scope.fetchFriendsAndFollowers(username, null, 'followers');
-
-                // flow follows by event "finishfetchFriendsAndFollowers"
-            };
-
-            $scope.fetchFriendsAndFollowers = function(username, cursor, type_of_users) {
-
-                // default value for the paramter "cursor" of Twitter
-                if (cursor == null || cursor == undefined) { cursor = '-1'; }
-
-                /**
-                 * Generate url for users fetching
-                 */
-                var url = Routing.generate('get_users_of_username', {
-                    'username': username,
-                    'cursor': cursor,
-                    'type_of_users': type_of_users
-                });
-
-                /**
-                 * request
-                 */
-                $http.get(url)
-                    .success(function (response) {
-
-                        // populate users list
-                        $scope.handleFetchedUsers(response.users, response.type_of_users);
-
-                        // update progress bar
-                        var numUsersFetchedSoFar = $scope.getNumFetchedUsersSoFar();
-                        var progressPercentage = numUsersFetchedSoFar / $scope.totalUsers * 100;
-                        ngProgress.set(progressPercentage);
-
-                        // update operation message
-                        $scope.operation_in_progress = $scope.users_fetched.friends_count +'/' + $scope.user.friends_count + ' friends ' +
-                        //'<br>' +
-                        'and '+ $scope.users_fetched.followers_count +'/' + $scope.user.followers_count + ' followers so far, and counting...';
-
-                        // load next users
-                        if (response.next_cursor_str == '0' || response.next_cursor_str == undefined) {
-                            //growl.success("Finished loading " + response.type_of_users);
-                            $scope.$emit('finishFetchFriendsAndFollowers', response.type_of_users);
-                        } else {
-                            // users fetching finished
-                            $scope.fetchFriendsAndFollowers(username, response.next_cursor_str, response.type_of_users);
-                        }
-                    })
-                    .error(function (response) {
-                        //growl.error("Fatal, maybe too many requests to Twitter. <br>Please try again later.");
-                        $('#modal-fatal-error').modal('show');
-                    });
-            };
-
-            /**
-             * Return the total number of fetched users so far
-             */
-            $scope.getNumFetchedUsersSoFar = function() {
-                return $scope.users_fetched.friends_count + $scope.users_fetched.followers_count;
-            };
-
-            /**
-             * Handle a batch of fetched user from Twitter
-             */
-            $scope.handleFetchedUsers = function(users, type_of_users) {
-                /**
-                 * increment counter
-                 */
-                angular.forEach(users, function(user, key) {
-
-                    if (type_of_users == 'friends') {
-                        $scope.users_fetched.friends_count++;
-                    } else if (type_of_users == 'followers') {
-                        $scope.users_fetched.followers_count++;
-                    }
-
-                    $scope.drawUserOnMap(user, type_of_users);
-                });
-            };
-
-            /*******************************************************************************************************
-             * Add users to map
-             ******************************************************************************************************/
-            /**
-             * Draws a single user on the map
-             */
-            $scope.drawUserOnMap = function(user, type_of_user) {
-                if (user.latitude == null || user.longitude == null) {
-                    $scope.users_fetched.not_localized[type_of_user] = $scope.addElementsToList([user], $scope.users_fetched.not_localized[type_of_user]);
-
-                    if (type_of_user == 'friends') {
-                        $scope.users_fetched.friends_not_localized_count++;
-                    } else if (type_of_user == 'followers') {
-                        $scope.users_fetched.followers_not_localized_count++;
-                    }
-
-                    return;
-                }
-
-                var marker = $scope.createOrRetrieveMarker(user.latitude, user.longitude);
-                $scope.addUserToMarker(user, type_of_user, marker);
-
-                if (type_of_user == 'friends') {
-                    $scope.users_fetched.friends_localized_count += 1;
-                } else if (type_of_user == 'followers') {
-                    $scope.users_fetched.followers_localized_count += 1;
-                }
-            };
-
-            $scope.getCoordinatesKeyFromCoordinates = function(lat, lon) {
-                return lat + ',' + lon;
-            };
-
-            $scope.getIconForMarker = function(number_of_users) {
-                var color = $scope.rainbow.colourAt(number_of_users);
-                return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld='+number_of_users+'|' + color + '|000000';
-            };
-
-            /**
-             * Retrieve a marker for given coordinates, or return one if already exists
-             */
-            $scope.createOrRetrieveMarker = function(lat, lon) {
-                // retrieve marker if already present in list
-                var latLonKey = $scope.getCoordinatesKeyFromCoordinates(lat, lon);
-
-                var marker = $scope.retrieveMarker(lat, lon);
-
-                if (marker == null) {
-                    marker = $scope.createMarker(lat, lon);
-
-                    $scope.markers[latLonKey] = marker;
-                }
-
-                return marker;
-            };
-
-            $scope.retrieveMarker = function(lat, lon) {
-                // retrieve marker if already present in list
-                var latLonKey = $scope.getCoordinatesKeyFromCoordinates(lat, lon);
-
-                var marker = $scope.markers[latLonKey];
-
-                if (marker == undefined) {
-                    return null;
-                }
-
-                return marker;
-            };
-
-            /**
-             * Create and return a Marker
-             */
-            $scope.createMarker = function(lat, long) {
-                var position = new google.maps.LatLng(lat, long);
-
-                var marker = new google.maps.Marker({
-                    position:   position,
-                    //title:      users_length + ' users',
-                    //animation:  google.maps.Animation.DROP,
-                    draggable:  true,
-                    map:        $scope.map
-                });
-
-                marker.users = {
-                    'friends': [],
-                    'followers': []
-                };
-
-                marker.locations = [];
-
-                marker.addListener('click', function() {
-                    // close all infowindows
-                    angular.forEach($scope.markers, function(marker, key) {
-                        if (marker.infowindow) {
-                            marker.infowindow.close();
-                        }
-                    });
-
-                    //marker.infowindow.close();
-                    if (marker.infowindow) {
-                        marker.infowindow.setMap(null);
-                        marker.infowindow = null;
-                    }
-
-                    // create the new infowindow
-                    marker.infowindow = $scope.createInfoWindowForMarker(marker);
-
-                    // open infowindow
-                    marker.infowindow.open($scope.map, marker);
-                });
-
-                $scope.markerCluster.addMarker(marker);
-
-                return marker;
-            };
-
-            /**
-             * Add a user to a marker
-             */
-            $scope.addUserToMarker = function(user, type_of_user, marker) {
-                // add user the list stored in marker
-                marker.users[type_of_user] = $scope.addElementsToList([user], marker.users[type_of_user]);
-
-                // update marker "locations" variable
-                marker.locations = $scope.addElementsToList([user.location], marker.locations);
-
-                var users_count = marker.users.friends.length + marker.users.followers.length;
-
-                // update marker icon
-                marker.setIcon($scope.getIconForMarker(users_count));
-
-                // update marker title
-                marker.title = users_count + ' users';
-            };
-
-            $scope.createInfoWindowForMarker = function(marker) {
-                var infowindow_content = '';
-
-                infowindow_content += '<div class="location-info-window">';
-
-                infowindow_content += '<p class="location">' + marker.locations[0] +'</p><br>';
-
-                angular.forEach(marker.users, function(users, type_of_users) {
-
-                    if (users.length <= 0) return;
-
-                    var p = type_of_users.charAt(0).toUpperCase() + type_of_users.slice(1);
-
-                    infowindow_content += '<p>' + p + ' ('+users.length+'):</p>';
-
-                    infowindow_content += "<div class='users-wrapper'>";
-
-                    angular.forEach(users, function(user, key) {
-                        infowindow_content += '<span tooltip="' + user.screen_name + '">' +
-                            '<img src="' + user.profile_image_url + '" /> ' +
-                        '</span>';
-                    });
-
-                    infowindow_content += '</div>';
-                });
-
-                infowindow_content += '</div>';
-
-                /**
-                 * add info window
-                 */
-                var infowindow = new google.maps.InfoWindow({
-                    content: infowindow_content
-                });
-
-                return infowindow;
-            };
-
-            /**
-             * Show Heatmap
-             */
-            $scope.showHeatMap = function() {
-                $scope.heatmap_visible = true;
-
-                $scope.heatmap = null;
-                delete $scope.heatmap;
-
-                var heatmapData = [];
-
-                angular.forEach($scope.markers, function(marker, key) {
-                    var users_count = marker.users.friends.length + marker.users.followers.length;
-
-                    heatmapData = heatmapData.concat([{
-                        'location': marker.position,
-                        'weight': users_count
-                    }]);
-                });
-
-                $scope.heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: heatmapData,
-                    radius: 50
-                });
-                $scope.heatmap.setMap($scope.map);
-            };
-
-            /**
-             * Hide Heatmap
-             */
-            $scope.hideHeatMap = function() {
-                $scope.heatmap_visible = false;
-
-                if ($scope.heatmap) {
-                    $scope.heatmap.setMap(null);
-                }
-            };
-
-            /**
-             * Show all markers
-             */
-            $scope.showMarkers = function() {
-                angular.forEach($scope.markers, function(marker, key) {
-                    marker.setVisible(true);
-                });
-
-                $scope.showMarkerClusterer();
-
-                $scope.markers_visible = true;
-            };
-
-            /**
-             * Hide all markers
-             */
-            $scope.hideMarkers = function() {
-                angular.forEach($scope.markerCluster.getMarkers(), function(marker, key) {
-                    marker.setVisible(false);
-                });
-
-                $scope.hideMarkerClusterer();
-
-                $scope.markers_visible = false;
-            };
-
-            /**
-             * Hide MarkerClusterer
-             */
-            $scope.hideMarkerClusterer = function() {
-                $scope.markerclusterer_visible = false;
-
-                $scope.markerCluster.map = new google.maps.Map(document.getElementById('fake-map'), {
-                    center: { lat: 48.856614, lng: 2.352222},
-                    zoom: 3
-                });;
-                $scope.markerCluster.resetViewport();
-                $scope.markerCluster.redraw();
-            };
-
-            /**
-             * Show all MarkerClusterer
-             */
-            $scope.showMarkerClusterer = function() {
-                $scope.markerCluster.map = $scope.map;
-                $scope.markerCluster.resetViewport();
-                $scope.markerCluster.redraw();
-
-                $scope.markerclusterer_visible = true;
-            };
-
-            /*******************************************************************************************************
-             * Utils
-             ******************************************************************************************************/
-            $scope.addElementsToList = function(users, list) {
-                var output = list;
-
-                angular.forEach(users, function(user, key) {
-                    if (output.indexOf(user) < 0) {
-                        output = output.concat(user);
-                    }
-                });
-
-                return output;
-            };
-
-            $scope.rgbToHex = function(rgb) {
-                rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
-                return (rgb && rgb.length === 4) ? "" +
-                ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
-                ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
-                ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
-            };
-
-            $scope.initializeRainbow = function() {
-                var rainbow = new Rainbow();
-                rainbow.setSpectrum('#FFFF99', 'red');
-                rainbow.setNumberRange(0, 100);
-
-                return rainbow;
-            };
-
-            /**
-             * Set the center on a given map
-             */
-            $scope.setCenterOnMap = function(map, position) {
-                map.setCenter(position);
-                map.setZoom(9);
-            };
-
-            $scope.setOperationMessage = function(message) {
-                $scope.operation_in_progress = message;
-            };
-
-            $scope.closeOperationMessage = function() {
-                usSpinnerService.stop('spinner-operation');
-
-                setTimeout(function() {
-                    $scope.operation_in_progress = '';
-                }, 3000);
-            };
-
-            $scope.showSingleOperationMessage = function(message) {
-                $scope.operation_in_progress = message;
-
-                $scope.closeOperationMessage();
-            };
-
-            /**
-             * Get users with location
-             *
-             * @TODO refactor
-             */
-            $scope.getUserFetchedWithLocation = function() {
-                var output = {
-                    'friends': [],
-                    'followers': []
-                };
-
-                angular.forEach($scope.markers, function(marker, marker_key) {
-                    angular.forEach(marker.users, function(users, type_of_users) {
-                        angular.forEach(users, function(user, key) {
-                            output[type_of_users] = output[type_of_users].concat([user]);
-                        });
-                    });
-                });
-
-                return output;
-            };
-
-            /**
-             * Get users without location
-             */
-            $scope.getUsersNotLocalized = function() {
-                var output = {};
-
-                angular.forEach($scope.users_fetched.not_localized, function(users, type_of_users) {
-                    angular.forEach(users, function(user, key) {
-                        if (output[user.screen_name] == undefined) {
-                            output[user.screen_name] = user;
-                        }
-                    });
-                });
-
-                return output;
-            };
-
-            /*******************************************************************************************************
-             * Clicks
-             ******************************************************************************************************/
-            $scope.handleClickOnUser = function(user) {
-                var marker = $scope.retrieveMarker(user.latitude, user.longitude);
-
-                if (marker == null) {
-                    return;
-                }
-
-                $scope.setCenterOnMap($scope.map, new google.maps.LatLng(user.latitude, user.longitude));
-
-                google.maps.event.trigger(marker, 'click');
-
-                //$scope.showSingleOperationMessage('Map centered on <a href="http://twitter.com/'+user.screen_name+'">@' + user.screen_name + '</a> at '+user.latitude + ',' + user.longitude);
-                $scope.showSingleOperationMessage('Centered on @' + user.screen_name + ' at '+user.latitude + ',' + user.longitude);
-            };
-
-            /**
-             * Toggle Heatmap
-             */
-            $scope.toggleHeatmap = function() {
-                if ($scope.heatmap_visible == false) {
-                    $scope.showHeatMap();
-                } else {
-                    $scope.hideHeatMap();
-                }
-            };
-
-            /**
-             * Toggle Markers
-             */
-            $scope.toggleMarkers = function() {
-                if ($scope.markers_visible == false) {
-                    $scope.showMarkers();
-                } else {
-                    $scope.hideMarkers();
-                }
-            };
-
-            /*******************************************************************************************************
-             * On document ready
-             ******************************************************************************************************/
-            $document.ready(function(){
-                {% if (app.request.get('username')) %}
-                    $scope.init();
-
-                    $scope.getUserProfile($scope.username);
-                {% endif %}
-            })
-        }]);
+        /**
+         * Images lazy load on not localized users modal opening
+         */
+        $('#modal-users-without-location').on('show.bs.modal', function (e) {
+            lazyLoadImagesFromDataOriginal($(e.target));
+        })
     </script>
-
 {% endblock %}

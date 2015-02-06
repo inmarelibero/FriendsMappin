@@ -6,7 +6,7 @@
 
 {% block header_next %}
 
-    <div id="alert-operation" class="ng-hide" ng-show="operation_in_progress != ''">
+    <div id="alert-operation" class="ng-hide" ng-show="operation_in_progress != ''" ng-cloak>
         <p class="message {[{ 'message-type-' + operation_message_type }]}">
             <span us-spinner="{radius:4, width:2, length: 3, color: '#FFF'}" spinner-key="spinner-operation" style="display: inline-block; margin-right: 13px; top: -4px; position: relative;" ng-show="show_spinner"></span>
 
@@ -32,7 +32,7 @@
 
 
 {% block header_text %}
-    <head-bar></head-bar>
+    <head-bar ng-cloak></head-bar>
 {% endblock %}
 
 
@@ -50,7 +50,7 @@
 
         <div id="right-panel">
 
-            <accordion close-others="true">
+            <accordion close-others="true" ng-cloak>
                 <accordion-group heading='{[{ UserMapService.user.screen_name }]}' is-open="true">
                     <p>
                         This is the map of the friends and followers of <a href="http://twitter.com/{[{ UserMapService.user.screen_name }]}" target="_blank">{[{ UserMapService.user.screen_name }]}</a>

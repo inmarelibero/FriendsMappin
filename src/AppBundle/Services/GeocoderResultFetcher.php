@@ -115,9 +115,6 @@ class GeocoderResultFetcher
         $geocoderResponse = $this->ivoryGoogleMapGeocoder->geocode($location);
 
         if (GeocoderStatus::OK !== $geocoderResponse->getStatus()) {
-            /**
-             * @todo return null?
-             */
             throw new Exception($geocoderResponse->getStatus());
         }
 

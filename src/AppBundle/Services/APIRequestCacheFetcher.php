@@ -19,7 +19,14 @@ class APIRequestCacheFetcher
         $this->em = $em;
     }
 
-    public function getAPICallResult($urlAction)
+    /**
+     * @param $urlAction
+     * @param null $maxAPITrials
+     * @return string
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function getAPICallResult($urlAction, $maxAPITrials = null)
     {
         $baseUrl = 'https://api.twitter.com';
 
@@ -34,8 +41,17 @@ class APIRequestCacheFetcher
 
             $response = $this->getAPICallResponse($baseUrl, $urlAction);
 
+            /**
+             * calculate max trials to APIs
+             *
+             * when fetching friends and followers, the number of trials could be high, while when fetching a user profile can be low because
+             * if username does not exist, making many requests is useless
+             */
+            $maxAPITrials = (is_integer($maxAPITrials)) ? $maxAPITrials : count($this->twitterOauthDatas)*2;
+
+
             $i = 1;
-            while ($response == null && $i <= count($this->oauthDatas)*2) {
+            while ($response == null && $i <= $maxAPITrials) {
                 $response = $this->getAPICallResponse($baseUrl, $urlAction);
 
                 $i++;

@@ -37,7 +37,7 @@
 
     </head>
 
-    <body ng-app="mainApp" ng-controller="FriendsMappinController">
+    <body ng-app="friendsMappinApp">
 
         <div growl></div>
 
@@ -55,8 +55,9 @@
                         #}
                         <a class="navbar-brand" href="{{ path('homepage') }}">FriendsMappin</a>
                     </div>
-                    <div class="">
+                    <div>
 
+                        {#
                         <form class="navbar-form navbar-left" role="search" action="{{ path('user_form_submit') }}" method="POST">
                             <div class="input-group" style="width: 160px;">
                                 <input id="username" type="text" class="form-control" name="username" ng-model="username" ng-init="username='{{ app.request.get('username', '') }}'" placeholder="Twitter user" />
@@ -67,44 +68,17 @@
                                 </span>
                             </div>
                         </form>
+                        #}
 
-                        <p class="navbar-text">
-                            <img src="{[{ user.profile_image_url }]}" style="height: 32px;" />
-
-                            &nbsp;&nbsp;
-
-                            {% if (app.request.get('username')) %}
-                                <span>{[{ user.friends_count }]} Friends</span> ({[{ users_fetched.friends_localized_count }]} localized)
-                                &nbsp;&nbsp;
-                                <br class="visible-xs">
-                                <span>{[{ user.followers_count }]} Followers</span> ({[{ users_fetched.followers_localized_count }]} localized)
-                            {% else %}
-                                <= enter a Twitter username to find where his followers and followings are
-                            {% endif %}
-                        </p>
+                        <div class="navbar-text">
+                            {% block header_text '' %}
+                        </div>
                     </div>
                 </div>
             </nav>
-            <div id="alert-operation" class="ng-hide" ng-show="operation_in_progress != ''">
-                <p class="message">
-                    <span us-spinner="{radius:4, width:2, length: 3, color: '#FFF'}" spinner-key="spinner-operation" style="position: relative; left: 15px; top: 13px; position: absolute;"></span>
-
-                    {[{ operation_in_progress }]}
-                </p>
-                {#
-
-                <br><br>
-                <p style="font-size: 12px;">
-                    While waiting, consider spreading the voice via
-                    {% if (app.request.get('username')) %}
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
-                    {% else %}
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Find where your followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
-                    {% endif %}
-                </p>
-                #}
-            </div>
         {% endblock %}
+
+        {% block header_next '' %}
 
         {% block body '' %}
 
@@ -132,27 +106,9 @@
         {# FOSJsRoutingBundle generated routes by controller #}
         <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
-        <script>
-            var app = angular.module('mainApp', ['ui.bootstrap', 'angular-growl', 'ngProgress', 'angularSpinner'])
-                .config(function($interpolateProvider){
-                    $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-                })
-                .config(['growlProvider', function(growlProvider) {
-                    growlProvider.globalTimeToLive(3000);
-                    growlProvider.globalDisableCountDown(false);
-                }]);
-
-            app.filter('keylength', function(){
-                return function(input){
-                    if(!angular.isObject(input)){
-                        throw Error("Usage of non-objects with keylength filter!!")
-                    }
-                    return Object.keys(input).length;
-                }
-            });
-        </script>
-
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+        {% include '@App/_angular_templates/_all.html.twig' %}
 
         {% block javascripts '' %}
 

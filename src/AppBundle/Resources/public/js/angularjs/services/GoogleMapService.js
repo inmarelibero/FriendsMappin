@@ -429,6 +429,8 @@ app.service('GoogleMapService', function(UtilsService) {
      * @returns {google.maps.visualization.HeatmapLayer}
      */
     this.createHeatMap = function() {
+        var instance = this;
+
         var heatmapData = [];
 
         angular.forEach(instance.getMarkers(), function(marker, key) {

@@ -45,7 +45,17 @@ app.service('GoogleMapService', function(UtilsService) {
     this.createMap = function() {
         return new google.maps.Map(document.getElementById('map_canvas'), {
             center: { lat: 48.856614, lng: 2.352222},
-            zoom: 3
+            zoom: 3,
+            panControl: true,
+            streetViewControl: false,
+            zoomControl: true,
+            zoomControlOptions: {
+                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                position: google.maps.ControlPosition.LEFT_TOP
+            },
+            scaleControl: true,
+            overviewMapControl: false,
+            mapTypeControl: false
         });
     };
 

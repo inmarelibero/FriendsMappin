@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 
         {% block metatags %}
             {% render controller('CopiaincollaMetaTagsBundle:MetaTags:render') %}
@@ -16,7 +16,7 @@
         {% javascripts '@frontend_header_javascripts' %}
             <script type="text/javascript" src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false&libraries=visualization"></script>
 
         {# HEADER STYLESHEETS #}
         {% stylesheets '@frontend_stylesheets' %}
@@ -37,66 +37,75 @@
 
     </head>
 
-    <body ng-app="friendsMappinApp">
+    <body ng-app="friendsMappinApp" {% block angular_init '' %}>
 
-        <div growl></div>
-
-        {% block header %}
-            <nav class="navbar navbar-default">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        {#
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
+        {% if is_mobile() %}
+            <div class="sidebar sidebar-right">
+                <div class="scrollable">
+                    <h1 class="scrollable-header app-name">
+                        FriendsMappin
+                        <button type="button" class="navbar-toggle collapsed pull-right" ui-toggle='uiSidebarRight' style="margin-right: 0px; color: #FFF;">
+                            <span class="glyphicon glyphicon-remove-sign"></span>
                         </button>
-                        #}
-                        <a class="navbar-brand" href="{{ path('homepage') }}">FriendsMappin</a>
-                    </div>
-                    <div>
-
-                        {#
-                        <form class="navbar-form navbar-left" role="search" action="{{ path('user_form_submit') }}" method="POST">
-                            <div class="input-group" style="width: 160px;">
-                                <input id="username" type="text" class="form-control" name="username" ng-model="username" ng-init="username='{{ app.request.get('username', '') }}'" placeholder="Twitter user" />
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-search"
-                                    </button>
-                                </span>
-                            </div>
-                        </form>
-                        #}
-
-                        <div class="navbar-text">
-                            {% block header_text '' %}
-                        </div>
+                    </h1>
+                    <div class="scrollable-content">
+                        {% block sidebar_right '' %}
                     </div>
                 </div>
-            </nav>
-        {% endblock %}
-
-        {% block header_next '' %}
-
-        {% block body '' %}
-
-        <nav class="navbar navbar-default navbar-fixed-bottom" id="footer">
-            <div class="container-fluid">
-                <p class="navbar-text">
-
-                    {% if (app.request.get('username')) %}
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
-                    {% else %}
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Show on a map where your Twitter followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
-                    {% endif %}
-
-                    Buggy and not completely working proof of concept by <a href="https://twitter.com/inmarelibero" target="_blank">inmarelibero</a>. Released open source at <a ref="https://github.com/inmarelibero/FriendsMappin">inmarelibero/FriendsMappin</a>.
-
-                </p>
             </div>
-        </nav>
+        {% endif %}
+
+        <div class="app">
+
+            {% block header %}
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            {#
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            #}
+                            <a class="navbar-brand" href="{{ path('homepage') }}">FriendsMappin</a>
+
+                            {% block header_text '' %}
+                        </div>
+
+                        {% if is_mobile() %}
+                            <button type="button" class="navbar-toggle collapsed pull-right" ui-toggle='uiSidebarRight' style="margin-right: 0px;">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        {% endif %}
+                    </div>
+                </nav>
+            {% endblock %}
+
+            {% block header_next '' %}
+
+            {% block body '' %}
+
+            <nav class="navbar navbar-default navbar-fixed-bottom hidden-sm hidden-xs" id="footer">
+                <div class="container-fluid">
+                    <p class="navbar-text">
+
+                        {% if (app.request.get('username')) %}
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin shows where followers of @{{ app.request.get('username') }} are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                        {% else %}
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-text="FriendsMappin - Show on a map where your Twitter followers are. #twitter #map" data-url="{{ app.request.uri }}">Tweet</a>
+                        {% endif %}
+
+                        Buggy and not completely working proof of concept by <a href="https://twitter.com/inmarelibero" target="_blank">inmarelibero</a>. Released open source at <a ref="https://github.com/inmarelibero/FriendsMappin">inmarelibero/FriendsMappin</a>.
+
+                    </p>
+                </div>
+            </nav>
+        </div>
 
         {# FOOTER JAVASCRIPT #}
         {% javascripts '@frontend_footer_javascripts' %}

@@ -1,14 +1,10 @@
 /*******************************************************************************************************
  * MAIN APP
  ******************************************************************************************************/
-var app = angular.module('friendsMappinApp', ['ui.bootstrap', 'angular-growl', 'ngProgress', 'angularSpinner'])
+var app = angular.module('friendsMappinApp', ['ui.bootstrap', 'ngProgress', 'angularSpinner', 'mobile-angular-ui'])
     .config(function($interpolateProvider){
         $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-    })
-    .config(['growlProvider', function(growlProvider) {
-        growlProvider.globalTimeToLive(3000);
-        growlProvider.globalDisableCountDown(false);
-    }]);
+    });
 
 /*******************************************************************************************************
  * DIRECTIVES

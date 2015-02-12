@@ -158,7 +158,7 @@ app.service('UserMapService', function($rootScope, UtilsService, GoogleMapServic
             message: 'Done!',
             progress: 100,
             show_spinner: false,
-            'close_after_timeout': 3000
+            close_after_timeout: 3000
         });
     };
 

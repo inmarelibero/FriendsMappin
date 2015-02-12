@@ -68,7 +68,13 @@
         function initializeBackgroundMap() {
             new google.maps.Map(document.getElementById('map_canvas'), {
                 center: {lat: 48.856614, lng: 2.352222},
-                zoom: 3
+                zoom: 3,
+                panControl: false,
+                streetViewControl: false,
+                zoomControl: false,
+                scaleControl: false,
+                overviewMapControl: false,
+                mapTypeControl: false
             });
         }
 

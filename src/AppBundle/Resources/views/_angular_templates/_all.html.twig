@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="head_bar.html">
-    <div>
-        <img src="{[{ UserMapService.user.profile_image_url }]}" style="height: 32px;" />
+    <img src="{[{ UserMapService.user.profile_image_url }]}" style="height: 32px;" />
 
+    {% if not is_mobile() %}
         &nbsp;&nbsp;
 
         {% if (app.request.get('username')) %}
@@ -12,5 +12,5 @@
         {% else %}
             <= enter a Twitter username to find where his followers and followings are
         {% endif %}
-    </div>
+    {% endif %}
 </script>

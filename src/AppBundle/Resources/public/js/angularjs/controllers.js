@@ -5,11 +5,10 @@ app.controller('MapController', [
     '$rootScope',
     '$scope',
     '$http',
-    'growl',
     '$document',
     'TwitterUserService',
     'UserMapService',
-    function($rootScope, $scope, $http, growl, $document, TwitterUserService, UserMapService) {
+    function($rootScope, $scope, $http, $document, TwitterUserService, UserMapService) {
 
     $scope.Math = Math;
 

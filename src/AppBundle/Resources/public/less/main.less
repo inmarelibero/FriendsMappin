@@ -30,25 +30,25 @@ ul {
   color: #666;
 
 
-  ul.users-loaded {
-    overflow-x: hidden;
-    height: 200px;
-    overflow: auto;
+}
+ul.users-loaded {
+  overflow-x: hidden;
+  height: 200px;
+  overflow: auto;
 
-    li {
-      float: left;
+  li {
+    float: left;
 
-      img {
-        width: 24px;
-        margin: 2px;
-      }
+    img {
+      width: 24px;
+      margin: 2px;
+    }
 
-      &.title {
-        width: 100%;
-        font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 5px;
-      }
+    &.title {
+      width: 100%;
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 5px;
     }
   }
 }
@@ -82,13 +82,20 @@ ul {
   margin: 0px;
   padding-right: 20%;
 
+  @media (max-width: 768px) {
+    padding-right: 0;
+  }
+
   .navbar-header {
+    display: inline-block;
+
     @media (max-width: 768px) {
       //float: left;
     }
   }
 
-  .navbar-text {
+  #header-text {
+    float: left;
     margin-top:     8px;
     margin-bottom:  8px;
     line-height:    22px;
@@ -113,6 +120,10 @@ ul {
 
   text-align: center;
   margin-right: 20%;
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+  }
 
   p.message {
     border-bottom-left-radius: 3px;
@@ -142,7 +153,7 @@ ul {
   z-index: 100;
 
   position: absolute;
-  top:    0;
+  top:    50px;
   right:  0;
   bottom: 0;
   left:   0;
@@ -216,3 +227,62 @@ ul#list-users-without-location {
     margin: 2px;
   }
 }
+
+
+/**
+ * mobile-angular-ui fix
+ */
+body {
+  &.has-modal .app, &.has-modal .sidebar, &.has-modal-overlay .app, &.has-modal-overlay .sidebar {
+    pointer-events: all;
+  }
+
+  &.sidebar-right-in.has-modal .app, &.sidebar-right-in.has-modal .sidebar, &.sidebar-right-in.has-modal-overlay .app, &.sidebar-right-in.has-modal-overlay .sidebar {
+    pointer-events: all;
+  }
+
+  /*
+  &.sidebar-right-in.has-modal .sidebar-right {
+    pointer-events: none;
+  }
+  */
+}
+
+/**
+ *
+ */
+.gmnoprint img {
+  max-width: none;
+}
+
+.sidebar {
+  h1 {
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+
+    button.navbar-toggle {
+      margin-right: 0px;
+      position: absolute;
+      top:  0;
+      right: 0;
+    }
+  }
+  .icon-bar {
+    background-color: #FFF;
+  }
+}
+
+
+
+
+
+/*
+body {
+  display: -webkit-box;
+  display: flex;
+
+  -webkit-box-orient: vertical;
+  flex-direction: column;
+}
+*/

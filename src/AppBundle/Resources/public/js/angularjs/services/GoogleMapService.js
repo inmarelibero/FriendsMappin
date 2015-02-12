@@ -46,7 +46,7 @@ app.service('GoogleMapService', function(UtilsService) {
         return new google.maps.Map(document.getElementById('map_canvas'), {
             center: { lat: 48.856614, lng: 2.352222},
             zoom: 3,
-            panControl: true,
+            panControl: false,
             streetViewControl: false,
             zoomControl: true,
             zoomControlOptions: {

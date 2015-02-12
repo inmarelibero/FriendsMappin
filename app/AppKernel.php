@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new Minifier\MinifierBundle(),
             new Copiaincolla\MetaTagsBundle\CopiaincollaMetaTagsBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new SunCat\MobileDetectBundle\MobileDetectBundle(),
 
             new AppBundle\AppBundle(),
         );

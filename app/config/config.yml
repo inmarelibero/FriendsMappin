@@ -10,6 +10,7 @@ imports:
     - { resource: egeloen/IvoryGoogleMapBundle/config.yml }
     - { resource: FriendsOfSymfony/FOSUserBundle.yml }
     - { resource: stof/StofDoctrineExtensionsBundle/config.yml }
+    - { resource: suncat2000/MobileDetectBundle.yml }
     - { resource: toopay/assetic-minifier/config.yml }
 
 framework:

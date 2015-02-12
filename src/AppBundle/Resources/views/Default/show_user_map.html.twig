@@ -4,6 +4,10 @@
     {% render controller('CopiaincollaMetaTagsBundle:MetaTags:render', { 'inlineMetatags': {'title': 'FriendsMappin: map for @'~username, 'description': 'This is the map displaying the followers and friends of @'~username} }) %}
 {% endblock %}
 
+{% block angular_init -%}
+    ng-controller="MapController as mapCtrl" ng-init="username='{{ username }}'"
+{%- endblock %}
+
 {% block header_next %}
 
     <div id="alert-operation" class="ng-hide" ng-show="operation_in_progress != ''" ng-cloak>
@@ -14,8 +18,8 @@
                 {[{ operation_in_progress }]}
             </span>
         </p>
-        {#
 
+        {#
         <br><br>
         <p style="font-size: 12px;">
             While waiting, consider spreading the voice via
@@ -32,162 +36,173 @@
 
 
 {% block header_text %}
-    <head-bar ng-cloak></head-bar>
+    <div id="header-text">
+        <head-bar ng-cloak></head-bar>
+    </div>
 {% endblock %}
 
 
+{% macro accordion_users() %}
+    <accordion close-others="true" ng-cloak>
+        <accordion-group heading='{[{ UserMapService.user.screen_name }]}' is-open="true">
+            <p>
+                This is the map of the friends and followers of <a href="http://twitter.com/{[{ UserMapService.user.screen_name }]}" target="_blank" ui-turn-off="uiSidebarRight">{[{ UserMapService.user.screen_name }]}</a>
+            </p>
+
+            <b><span class="glyphicon glyphicon-stats"></span> Friends statistics</b>
+            <p>
+                {[{ UserMapService.user.friends_count }]} total
+                <br>
+                {[{ UserMapService.counters.localized_friends }]} localized
+            </p>
+            <b><span class="glyphicon glyphicon-stats"></span> Followers statistics</b>
+            <p>
+                {[{ UserMapService.user.followers_count }]} total
+                <br>
+                {[{ UserMapService.counters.localized_followers }]} localized
+            </p>
+            <div id="advanced-operations" ng-show="UserMapService.state_flags.fetch_all_users_finished" class="ng-hide">
+                <b><span class="glyphicon glyphicon-remove-sign"></span> Errors</b>
+                <p>
+                    <a class="" href="javascript:void(0);" data-toggle="modal" data-target="#modal-users-without-location" ui-turn-off="uiSidebarRight">
+                        {[{ UserMapService.counters.not_localized_friends + UserMapService.counters.not_localized_followers }]} Users without location
+                    </a>
+                </p>
+
+                <b><span class="glyphicon glyphicon-plus-sign"></span> More</b>
+                <p>
+                    <a
+                        href="javascript:void(0)"
+                        ng-click=" UserMapService.toggleHeatmap()"
+                        ui-turn-off="uiSidebarRight"
+                    >
+                        Toggle Heatmap
+                    </a>
+                    <br>
+                    <a
+                        href="javascript:void(0)"
+                        ng-click="UserMapService.toggleMarkers()"
+                        ui-turn-off="uiSidebarRight"
+                    >
+                        Toggle Markers
+                    </a>
+                </p>
+            </div>
+        </accordion-group>
+        <accordion-group heading="Friends ({[{ UserMapService.counters.localized_friends }]})">
+            <ul class="users-loaded">
+                <li ng-repeat="user in UserMapService.fetched_users_organized.friends.localized">
+                    <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)" ui-turn-off="uiSidebarRight">
+                        <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                    </a>
+                </li>
+            </ul>
+        </accordion-group>
+        <accordion-group heading="Followers ({[{ UserMapService.counters.localized_followers }]})">
+            <ul class="users-loaded">
+                <li ng-repeat="user in UserMapService.fetched_users_organized.followers.localized">
+                    <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)" ui-turn-off="uiSidebarRight">
+                        <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                    </a>
+                </li>
+            </ul>
+        </accordion-group>
+    </accordion>
+{% endmacro %}
+
 {% block body %}
 
-    <div ng-controller="MapController as mapCtrl" ng-init="username='{{ username }}'">
+    <div id="wrapper-fullscreen">
+        <div id="map-wrapper">
+            <div id="map_canvas" style="width: 100%; height: 100%"></div>
 
-        <div id="wrapper-fullscreen">
-            <div id="map-wrapper">
-                <div id="map_canvas" style="width: 100%; height: 100%"></div>
-
-                <div id="fake-map" style="dispaly: none; width: 0px; height: 0px"></div>
-            </div>
+            <div id="fake-map" style="dispaly: none; width: 0px; height: 0px"></div>
         </div>
 
-        <div id="right-panel">
+        {% if not is_mobile() %}
+            <div id="right-panel">
+                {{ _self.accordion_users() }}
+            </div>
+        {% endif %}
 
-            <accordion close-others="true" ng-cloak>
-                <accordion-group heading='{[{ UserMapService.user.screen_name }]}' is-open="true">
-                    <p>
-                        This is the map of the friends and followers of <a href="http://twitter.com/{[{ UserMapService.user.screen_name }]}" target="_blank">{[{ UserMapService.user.screen_name }]}</a>
-                    </p>
+    </div> {# <div id="wrapper-fullscreen"> #}
 
-                    <b><span class="glyphicon glyphicon-stats"></span> Friends statistics</b>
+    <!-- Users not localized modal -->
+    <div class="modal fade" id="modal-users-without-location" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Users without location</h4>
+                </div>
+                <div class="modal-body">
                     <p>
-                        {[{ UserMapService.user.friends_count }]} total
-                        <br>
-                        {[{ UserMapService.counters.localized_friends }]} localized
+                        We weren't able to retrieve the location for {[{ UserMapService.counters.not_localized_friends + UserMapService.counters.not_localized_followers }]} users.<br>
+                        Click on a picture and send a tweet asking to update his location.
                     </p>
-                    <b><span class="glyphicon glyphicon-stats"></span> Followers statistics</b>
-                    <p>
-                        {[{ UserMapService.user.followers_count }]} total
-                        <br>
-                        {[{ UserMapService.counters.localized_followers }]} localized
-                    </p>
-                    <div id="advanced-operations" ng-show="UserMapService.state_flags.fetch_all_users_finished" class="ng-hide">
-                        <b><span class="glyphicon glyphicon-remove-sign"></span> Errors</b>
-                        <p>
-                            <a class="" href="javascript:void(0);" data-toggle="modal" data-target="#modal-users-without-location">
-                                {[{ UserMapService.counters.not_localized_friends + UserMapService.counters.not_localized_followers }]} Users without location
+                    <ul id="list-users-without-location">
+                        <li ng-repeat="user in UserMapService.fetched_users_organized.friends.not_localized">
+                            <a href="https://twitter.com/intent/tweet?text={{ '@'|url_encode }}{[{ user.screen_name }]} would you set the location in your Twitter profile? I'd like to view you on {{ app.request.uri|url_encode }}" tooltip="{[{ user.screen_name }]}" ng-click="">
+                                <img data-original="{[{ user.profile_image_url }]}" />
                             </a>
-                        </p>
-
-                        <b><span class="glyphicon glyphicon-plus-sign"></span> More</b>
-                        <p>
-                            <a
-                                href="javascript:void(0)"
-                                ng-click=" UserMapService.toggleHeatmap()"
-                            >
-                                Toggle Heatmap
-                            </a>
-                            <br>
-                            <a
-                                href="javascript:void(0)"
-                                ng-click="UserMapService.toggleMarkers()"
-                            >
-                                Toggle Markers
-                            </a>
-                        </p>
-                    </div>
-                </accordion-group>
-                <accordion-group heading="Friends ({[{ UserMapService.counters.localized_friends }]})">
-                    <ul class="users-loaded">
-                        <li ng-repeat="user in UserMapService.fetched_users_organized.friends.localized">
-                            <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)">
-                                <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
+                        </li>
+                        <li ng-repeat="user in UserMapService.fetched_users_organized.followers.not_localized">
+                            <a href="https://twitter.com/intent/tweet?text={{ '@'|url_encode }}{[{ user.screen_name }]} would you set the location in your Twitter profile? I'd like to view you on {{ app.request.uri|url_encode }}" tooltip="{[{ user.screen_name }]}" ng-click="">
+                                <img data-original="{[{ user.profile_image_url }]}" />
                             </a>
                         </li>
                     </ul>
-                </accordion-group>
-                <accordion-group heading="Followers ({[{ UserMapService.counters.localized_followers }]})">
-                    <ul class="users-loaded">
-                        <li ng-repeat="user in UserMapService.fetched_users_organized.followers.localized">
-                            <a href="javascript:void(0)" tooltip="{[{ user.screen_name }]}" ng-click="handleClickOnUser(user)">
-                                <img src="{[{ user.profile_image_url }]}" tooltip="{[{ user.screen_name }]}" />
-                            </a>
-                        </li>
-                    </ul>
-                </accordion-group>
-            </accordion>
-
-        </div>
-
-        <!-- Users not localized modal -->
-        <div class="modal fade" id="modal-users-without-location" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Users without location</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                            We weren't able to retrieve the location for {[{ UserMapService.counters.not_localized_friends + UserMapService.counters.not_localized_followers }]} users.<br>
-                            Click on a picture and send a tweet asking to update his location.
-                        </p>
-                        <ul id="list-users-without-location">
-                            <li ng-repeat="user in UserMapService.fetched_users_organized.friends.not_localized">
-                                <a href="https://twitter.com/intent/tweet?text={{ '@'|url_encode }}{[{ user.screen_name }]} would you set the location in your Twitter profile? I'd like to view you on {{ app.request.uri|url_encode }}" tooltip="{[{ user.screen_name }]}" ng-click="">
-                                    <img data-original="{[{ user.profile_image_url }]}" />
-                                </a>
-                            </li>
-                            <li ng-repeat="user in UserMapService.fetched_users_organized.followers.not_localized">
-                                <a href="https://twitter.com/intent/tweet?text={{ '@'|url_encode }}{[{ user.screen_name }]} would you set the location in your Twitter profile? I'd like to view you on {{ app.request.uri|url_encode }}" tooltip="{[{ user.screen_name }]}" ng-click="">
-                                    <img data-original="{[{ user.profile_image_url }]}" />
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-
-        <!-- Fatal error modal -->
-        <div class="modal fade" id="modal-fatal-error" tabindex="-1" role="dialog" data-backdrop="static">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" style="color: red;">
-                            <span class="glyphicon glyphicon-ban-circle"></span> Fatal error
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="error default-error">
-                            <p>
-                                Something <b>veeeery bad</b> happened.
-                                <br>
-                                Probably we made too many requests to Twitter APIs.
-                            </p>
-                            <br>
-                            <h4>Yeah, well, gimme more.</h4>
-                            <p>
-                                We can do more or less <b>150 requests</b> to the Twitter APIs <b>every 15 minutes</b>; for every request we can retrieve <b>200 friends or followers</b>.<br>
-                                Now, <b>{[{ UserMapService.user.screen_name }]}</b> has a total of {[{ UserMapService.getTotalUsers() }]} friends and followers, this means that FriendsMappin should do more or less <b>{[{ Math.ceil(UserMapService.getTotalUsers()/200) }]} requests</b>.<br>
-                                Maybe are too many?
-                                <br><br>
-                                <b>But all requests are cached</b>, it's to say that the second time you load this map, we don't call Twitter APIs if we already have  a request in database.
-                            </p>
-                            <p>
-                                <b>So</b>, please try again in some minutes, this may work ;) Or <a href="{{ path('homepage') }}">try another user</a>.
-                            </p>
-                            <p class="text-right">
-                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
-                            </p>
-                        </div>
-                        <div class="error custom-error"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <!-- Fatal error modal -->
+    <div class="modal fade" id="modal-fatal-error" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="color: red;">
+                        <span class="glyphicon glyphicon-ban-circle"></span> Fatal error
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="error default-error">
+                        <p>
+                            Something <b>veeeery bad</b> happened.
+                            <br>
+                            Probably we made too many requests to Twitter APIs.
+                        </p>
+                        <br>
+                        <h4>Yeah, well, gimme more.</h4>
+                        <p>
+                            We can do more or less <b>150 requests</b> to the Twitter APIs <b>every 15 minutes</b>; for every request we can retrieve <b>200 friends or followers</b>.<br>
+                            Now, <b>{[{ UserMapService.user.screen_name }]}</b> has a total of {[{ UserMapService.getTotalUsers() }]} friends and followers, this means that FriendsMappin should do more or less <b>{[{ Math.ceil(UserMapService.getTotalUsers()/200) }]} requests</b>.<br>
+                            Maybe are too many?
+                            <br><br>
+                            <b>But all requests are cached</b>, it's to say that the second time you load this map, we don't call Twitter APIs if we already have  a request in database.
+                        </p>
+                        <p>
+                            <b>So</b>, please try again in some minutes, this may work ;) Or <a href="{{ path('homepage') }}">try another user</a>.
+                        </p>
+                        <p class="text-right">
+                            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+                        </p>
+                    </div>
+                    <div class="error custom-error"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block sidebar_right %}
+    {{ _self.accordion_users() }}
 {% endblock %}
 
 {% block javascripts %}

@@ -20,10 +20,14 @@ assetic:
             filters: lessphp
         frontend_stylesheets:
             inputs:
-                - assets/bootstrap-3.3.2/bootstrap.min.css
-                - assets/bootstrap-3.3.2/bootstrap-theme.min.css
+                - assets/mobile-angular-ui-1.2.0-beta.11/dist/css/mobile-angular-ui-base.min.css
+                #- assets/mobile-angular-ui-1.2.0-beta.11/dist/css/mobile-angular-ui-hover.min.css
+                #- assets/mobile-angular-ui-1.2.0-beta.11/dist/css/mobile-angular-ui-desktop.min.css
+
                 - assets/angular-growl/angular-growl-2-master/build/angular-growl.min.css
                 - assets/ngProgress/ngProgress.css
+                - assets/bootstrap-3.3.2/css/bootstrap.min.css
+                - assets/bootstrap-3.3.2/css/bootstrap-theme.min.css
 
                 - @frontend_lesses
             filters: [?minifier_css, cssrewrite]
@@ -35,7 +39,9 @@ assetic:
         frontend_header_javascripts:
             inputs:
                 - assets/AngularJS/1.4.0-beta.1/angular.min.js
-                #- assets/AngularJS/1.4.0-beta.1/angular-sanitize.min.js
+                #- assets/AngularJS/1.4.0-beta.1/angular-route.js
+                #- assets/AngularJS/1.2.0/angular.js
+                #- assets/AngularJS/1.2.0/angular-route.js
             filters: [?minifier_js]
 
         # footer javascript
@@ -44,12 +50,11 @@ assetic:
             filters: [cssrewrite]
         frontend_footer_javascripts:
             inputs:
-                - @AppBundle/Resources/public/js/main.js
 
-                - @AppBundle/Resources/public/js/angularjs/app.js
-                - @AppBundle/Resources/public/js/angularjs/filters.js
-                - @AppBundle/Resources/public/js/angularjs/services/*.js
-                - @AppBundle/Resources/public/js/angularjs/controllers.js
+                - assets/mobile-angular-ui-1.2.0-beta.11/dist/js/mobile-angular-ui.min.js
+                #- assets/mobile-angular-ui-1.2.0-beta.11/dist/js/mobile-angular-ui.core.min.js
+                #- assets/mobile-angular-ui-1.2.0-beta.11/dist/js/mobile-angular-ui.components.min.js
+                - assets/mobile-angular-ui-1.2.0-beta.11/dist/js/mobile-angular-ui.gestures.min.js
 
                 - assets/underscorejs/underscore-min.js
 
@@ -57,15 +62,23 @@ assetic:
                 - assets/jquery-1.11.2/jquery-migrate-1.2.1.min.js
                 - assets/lazyload/jquery.lazyload.min.js
 
-                - assets/bootstrap-3.3.2/bootstrap.min.js
+                - assets/bootstrap-3.3.2/js/bootstrap.min.js
                 - assets/js-marker-clusterer/markerclusterer_compiled.js
                 - assets/RainbowVis-JS/rainbowvis.js
                 - assets/ui-bootstrap/ui-bootstrap-tpls-0.12.0.js
                 - assets/angular-growl/angular-growl-2-master/build/angular-growl.min.js
+
                 - assets/ngProgress/ngProgress.min.js
                 - assets/spinjs/spin.min.js
                 - assets/angular-spinner-0.6.1/angular-spinner.min.js
                 - assets/RainbowVis-JS/rainbowvis.js
                 - %kernel.root_dir%/../web/bundles/fosjsrouting/js/router.js
+
+                - @AppBundle/Resources/public/js/main.js
+
+                - @AppBundle/Resources/public/js/angularjs/app.js
+                - @AppBundle/Resources/public/js/angularjs/filters.js
+                - @AppBundle/Resources/public/js/angularjs/services/*.js
+                - @AppBundle/Resources/public/js/angularjs/controllers.js
 
             filters: [?minifier_js]
